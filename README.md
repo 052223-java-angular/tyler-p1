@@ -1,4 +1,4 @@
-# P0 - Pair Programming eCommerce Project
+# P1 - Should I Go?
 
 ## Introduction
 
@@ -6,34 +6,26 @@ This is a Java-based command-line interface (CLI) eCommerce application. The app
 
 ## User Stories
 
-- **As a user**, I want to register an account so that I can have a personalized shopping experience.
-- **As a user**, I want to log in to my account so that I can access my shopping cart and order history.
-- **As a user**, I want to browse through products only when logging in.
-- **As a user**, I want to search for products by name, category, or price range so that I can find what I'm looking for.
-- **As a user**, I want to add products to my shopping cart so that I can purchase them later.
-- **As a user**, I want to modify the quantity or remove items from my cart so that I can make changes before finalizing the purchase.
-- **As a user**, I want to check out and pay for my order securely so that my personal and financial information is safe.
-- **As a user**, I want to review my order history so that I can keep track of my purchases.
-- **As a user**, I want to rate and review products so that I can share my experience with other users.
-- **As a user**, I want to view ratings and reviews from other users so that I can make informed buying decisions.
-
+- **As a user**, I want to register an account so that I can have a personalized experience.
+- **As a user**, I want to have a list of my favorite places to go so the system can make suggestions of when I should go to them.
+- **As a user**, I want to log in to my account so that I can access my search and suggestion history.
+- **As a user**, I want to get a suggestion of whether I should go to a place or not based on weather, traffic, time of day, and other various preferences
+- **As a user**, I want to be able to rate a suggestion so I can give feedback to system of whether or not the suggestion was useful
 
 ## MVP (Minimum Viable Product)
 
 - User registration and login
-- Browsing and searching for products
-- Adding products to a shopping cart
-- Modifying the shopping cart
-- Secure payment process
-- Order history
-- Product rating and reviewing
+- Search history
+- Weather based suggestions
+- Traffic based suggestions
+- User interest based suggestions
+- Search rating
 
 ## Stretch Goals
 
-- Implementing a recommendation system based on user's previous purchases
-- Adding an admin role that can add, remove, or modify products
-- Implementing promotional codes and discounts
-- Adding a wish list feature
+- Implementing a recommendation system based on user's previous searches
+- Implementing promotional codes and discounts for places
+- Adding a notification feature to notify users when the best time to go to places they'd like to go
 
 ## Tech Stacks
 
@@ -46,6 +38,8 @@ This is a Java-based command-line interface (CLI) eCommerce application. The app
 - **BCrypt**: A Java library for hashing and checking passwords for security.
 - **JUnit, Mockito, and PowerMock**: Used for unit and integration testing.
 - **Git and GitHub**: Used for version control.
+- **Google Maps** or **Bing Maps**: Used for traffic and popular times data
+- **WeatherAPI** or **OpenWeatherMap**: Used for weather data
 
 ## Requirements
 
@@ -64,4 +58,3 @@ This is a Java-based command-line interface (CLI) eCommerce application. The app
 - **Documentation**: The repository should include a README file with clear instructions on how to run the application. Code should be well-commented to allow for easy understanding and maintenance.
 
 - **Scalable**: The design of the application should be scalable, allowing for easy addition of new features or modifications in the future.
-
