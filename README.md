@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is a web application which utilizes Java in the backend and Angular in the front end which makes suggestions to users as to whether they should stay home or go to a location based on their favorite locations, the whether, how busy the place currently is, and other preferences. The application with primarily built using Java and Angular and will utilize a PostgreSQL database to store user preferences and suggestion information.
+This is a web application which makes suggestions to users as to whether they should stay home or go to a location based on their favorite locations, the whether, how busy the place currently is, and other preferences. The application with primarily built using Java and Angular and will utilize a PostgreSQL database to store user preferences and suggestion information.
 
 ## User Stories
 
