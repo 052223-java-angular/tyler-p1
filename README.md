@@ -2,13 +2,14 @@
 
 ## Introduction
 
-Welcome to MarsTown! Order your favorite MarsGrass™-fed beef and steak burgers now! Also, be sure to try our MarsFruit™ infused smoothies and shakes! When donating to one of our causes, keep an eye out for the MarsCandy™, which has unique effects on Earthlings!
+Welcome to MarsTown™! Order your favorite MarsGrass™-fed beef and steak burgers now! Also, be sure to try our MarsFruit™ infused smoothies and shakes! When donating to one of our causes, keep an eye out for the MarsCandy™, which has unique effects on Earthlings!
 
 This is a web application which will allow you to make orders of our delicious food! The application with primarily built using Java and Angular and will utilize a PostgreSQL database to store user preferences, point information, and payment information.
 
 ## User Stories
 
 - **As a user**, I want to register an account so that I can have a personalized ordering experience.
+- **As a user**, I want to be able to add a profile picture to my account.
 - **As a user**, I want to log in to my account so that I can access my current order and see my order history.
 - **As a user**, I want to browse through items.
 - **As a user**, I want to add items to my current order, only when logging in.
