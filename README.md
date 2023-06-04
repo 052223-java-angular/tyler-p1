@@ -1,31 +1,41 @@
-# P1 - Stay or Go?
+# P1 - MarsTown: A Restaurant Application
 
 ## Introduction
 
-This is a web application which makes suggestions to users as to whether they should stay home or go to a location based on their favorite locations, the whether, how busy the place currently is, and other preferences. The application with primarily built using Java and Angular and will utilize a PostgreSQL database to store user preferences and suggestion information.
+Welcome to MarsTown! Order your favorite MarsGrass™-fed beef and steak burgers now! Also, be sure to try our MarsFruit™ infused smoothies and shakes! When donating to one of our causes, keep an eye out for the MarsCandy™, which has unique effects on Earthlings!
+
+This is a web application which will allow you to make orders of our delicious food! The application with primarily built using Java and Angular and will utilize a PostgreSQL database to store user preferences, point information, and payment information.
 
 ## User Stories
 
-- **As a user**, I want to register an account so that I can have a personalized experience.
-- **As a user**, I want to have a list of my favorite places to go so the system can make suggestions of when I should go to them.
-- **As a user**, I want to log in to my account so that I can access my search and suggestion history.
-- **As a user**, I want to get a suggestion of whether I should go to a place or not based on weather, traffic, time of day, and other various preferences
-- **As a user**, I want to be able to rate a suggestion so I can give feedback to system of whether or not the suggestion was useful
+- **As a user**, I want to register an account so that I can have a personalized ordering experience.
+- **As a user**, I want to log in to my account so that I can access my current order and see my order history.
+- **As a user**, I want to browse through items.
+- **As a user**, I want to add items to my current order, only when logging in.
+- **As a user**, I want to modify the quantity or remove items from my current order so I can make changes before finalizing the purchase.
+- **As a user**, I want to use the customization options of the items before adding the items to my current order.
+- **As a user**, I want to add items to a favorites list, so I can easily reorder them.
+- **As a user**, I want to check out and pay for my order securely so that my personal and financial information is safe.
+- **As a user**, I want to review my order history so that I can keep track of my purchases.
 
 ## MVP (Minimum Viable Product)
 
 - User registration and login
-- Search history
-- Weather based suggestions
-- Traffic based suggestions
-- User interest based suggestions
-- Search rating
+- Browsing for items
+- Adding items to current order
+- Modifying the item quantity of the current order
+- Item customization
+- Adding items to a favorites list
+- Secure Payment process
+- Order History
 
 ## Stretch Goals
 
-- Implementing a recommendation system based on user's previous searches
-- Implementing promotional codes and discounts for places
-- Adding a notification feature to notify users when the best time to go to places they'd like to go
+- Donations to restaurant-led causes
+- A rewards/points system that allows the user to purchase items using points they receive from previously placed orders
+- A closed store feature that allows the user to browse items, but limits adding items to the current order, viewing the current order, or placing an order
+- Multiple orders per user
+- Pizza and toppings as an item
 
 ## Tech Stacks
 
@@ -38,8 +48,6 @@ This is a web application which makes suggestions to users as to whether they sh
 - **BCrypt**: A Java library for hashing and checking passwords for security.
 - **JUnit, Mockito, and PowerMock**: Used for unit and integration testing.
 - **Git and GitHub**: Used for version control.
-- **Google Maps** or **Bing Maps**: Used for traffic and popular times data
-- **WeatherAPI** or **OpenWeatherMap**: Used for weather data
 
 ## Requirements
 
