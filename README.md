@@ -15,8 +15,10 @@ This is a web application which will allow you to make orders of our delicious f
 - **As a user**, I want to add items to my current order, only when logging in.
 - **As a user**, I want to modify the quantity or remove items from my current order so I can make changes before finalizing the purchase.
 - **As a user**, I want to use the customization options of the items before adding the items to my current order.
-- **As a user**, I want to check out and pay for my order securely so that my personal and financial information is safe.
+- **As a user**, I want to check out and pay for my order securely using Stripe so that my personal and financial information is safe.
 - **As a user**, I want to review my order history so that I can keep track of my purchases.
+- **As a user**, I want to be able to add items to a favorites list
+- **As a user**, I want to get points from previously placed orders and use those points in the future to purchase items 
 
 ## MVP (Minimum Viable Product)
 
@@ -26,16 +28,16 @@ This is a web application which will allow you to make orders of our delicious f
 - Modifying the item quantity of the current order
 - Burger customization options
 - Shake customization options
-- Secure Payment process
-- Order History
+- Secure payment process using Stripe
+- Order history
+- A rewards/points system that allows the user to purchase items using points they receive from previously placed orders
+- Adding items to a favorites list
 
 ## Stretch Goals
 
-- A rewards/points system that allows the user to purchase items using points they receive from previously placed orders or from donating to causes
 - A closed store feature that allows the user to browse items, but limits adding items to the current order, viewing the current order, or placing an order
 - Delivery service type
 - Pizza as an item with topping customization options
-- Adding items to a favorites list
 
 ## Tech Stacks
 
@@ -48,6 +50,7 @@ This is a web application which will allow you to make orders of our delicious f
 - **BCrypt**: A Java library for hashing and checking passwords for security.
 - **JUnit, Mockito, and PowerMock**: Used for unit and integration testing.
 - **Git and GitHub**: Used for version control.
+- **Stripe**: Payment processing API.
 
 ## Requirements
 
