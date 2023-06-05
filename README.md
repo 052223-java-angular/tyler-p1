@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Welcome to MarsTown™! Order your favorite MarsGrass™-fed beef and steak burgers now! Also, be sure to try our MarsFruit™ infused smoothies and shakes! When donating to one of our causes, keep an eye out for the MarsCandy™, which has unique effects on Earthlings!
+Welcome to MarsTown™! Order your favorite MarsGrass™-fed beef and steak burgers now! Also, be sure to try our MarsFruit™-infused shakes! When donating to one of our causes, keep an eye out for the MarsCandy™, which has unique effects on Earthlings!
 
 This is a web application which will allow you to make orders of our delicious food! The application with primarily built using Java and Angular and will utilize a PostgreSQL database to store user preferences, point information, and payment information.
 
@@ -15,7 +15,6 @@ This is a web application which will allow you to make orders of our delicious f
 - **As a user**, I want to add items to my current order, only when logging in.
 - **As a user**, I want to modify the quantity or remove items from my current order so I can make changes before finalizing the purchase.
 - **As a user**, I want to use the customization options of the items before adding the items to my current order.
-- **As a user**, I want to add items to a favorites list, so I can easily reorder them.
 - **As a user**, I want to check out and pay for my order securely so that my personal and financial information is safe.
 - **As a user**, I want to review my order history so that I can keep track of my purchases.
 
@@ -25,18 +24,18 @@ This is a web application which will allow you to make orders of our delicious f
 - Browsing for items
 - Adding items to current order
 - Modifying the item quantity of the current order
-- Item customization
-- Adding items to a favorites list
+- Burger customization options
+- Shake customization options
 - Secure Payment process
 - Order History
 
 ## Stretch Goals
 
 - Donations to restaurant-led causes
-- A rewards/points system that allows the user to purchase items using points they receive from previously placed orders
+- A rewards/points system that allows the user to purchase items using points they receive from previously placed orders or from donating to causes
 - A closed store feature that allows the user to browse items, but limits adding items to the current order, viewing the current order, or placing an order
-- Multiple orders per user
-- Pizza and toppings as an item
+- Pizza as an item with topping customization options
+- Adding items to a favorites list
 
 ## Tech Stacks
 
