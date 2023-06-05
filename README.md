@@ -34,6 +34,7 @@ This is a web application which will allow you to make orders of our delicious f
 - Donations to restaurant-led causes
 - A rewards/points system that allows the user to purchase items using points they receive from previously placed orders or from donating to causes
 - A closed store feature that allows the user to browse items, but limits adding items to the current order, viewing the current order, or placing an order
+- Delivery service type
 - Pizza as an item with topping customization options
 - Adding items to a favorites list
 
