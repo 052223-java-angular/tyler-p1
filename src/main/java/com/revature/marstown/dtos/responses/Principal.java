@@ -1,6 +1,6 @@
 package com.revature.marstown.dtos.responses;
 
-import com.revature.yolp.entities.User;
+import com.revature.marstown.entities.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

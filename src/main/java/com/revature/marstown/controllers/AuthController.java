@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.marstown.dtos.requests.NewLoginRequest;
 import com.revature.marstown.dtos.requests.NewUserRequest;
+import com.revature.marstown.dtos.responses.Principal;
 
-import com.revature.yolp.dtos.responses.Principal;
-import com.revature.yolp.services.JwtTokenService;
-import com.revature.yolp.services.UserService;
-import com.revature.yolp.utils.custom_exceptions.ResourceConflictException;
+import com.revature.marstown.services.JwtTokenService;
+import com.revature.marstown.services.UserService;
+import com.revature.marstown.utils.custom_exceptions.ResourceConflictException;
 
 import lombok.AllArgsConstructor;
 

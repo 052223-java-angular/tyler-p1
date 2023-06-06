@@ -1,11 +1,11 @@
-package com.revature.yolp.services;
+package com.revature.marstown.services;
 
 import org.springframework.stereotype.Service;
 
-import com.revature.yolp.dtos.requests.NewRoleRequest;
-import com.revature.yolp.entities.Role;
-import com.revature.yolp.repositories.RoleRepository;
-import com.revature.yolp.utils.custom_exceptions.RoleNotFoundException;
+import com.revature.marstown.dtos.requests.NewRoleRequest;
+import com.revature.marstown.entities.Role;
+import com.revature.marstown.repositories.RoleRepository;
+import com.revature.marstown.utils.custom_exceptions.RoleNotFoundException;
 
 import lombok.AllArgsConstructor;
 
