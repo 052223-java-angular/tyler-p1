@@ -29,28 +29,14 @@ public class MenuItem {
     @Id
     private String id;
 
-    @Column(nullable = false)
-    private String name;
-
-    @Column
-    private String description;
-
-    @Column(name = "image_url")
-    private String imageUrl;
-
-    @Column(name = "max_quantity")
-    private Integer minimumQuantity;
-
-    @Column(name = "min_quantity")
-    private Integer maximumQuantity;
-
     @ManyToOne
     @JoinColumn(name = "menu_section_id")
     @JsonBackReference
-    private MenuSection menuSection;
-
-    @OneToOne(mappedBy = "parentMenuItem")
     private MenuSection parentMenuSection;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentMenuItem")
+    @JsonManagedReference
+    private Set<MenuSection> menuSections;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "menuItem")
     @JsonManagedReference
@@ -62,4 +48,9 @@ public class MenuItem {
 
     @Column
     private Integer displayOrder;
+
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    @JsonBackReference
+    private Item item;
 }

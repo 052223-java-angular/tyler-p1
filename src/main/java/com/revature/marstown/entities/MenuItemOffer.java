@@ -35,4 +35,10 @@ public class MenuItemOffer {
     @JoinColumn(name = "menu_item_id")
     @JsonBackReference
     private MenuItem menuItem;
+
+    @Column(name = "max_quantity")
+    private Integer minimumQuantity;
+
+    @Column(name = "min_quantity")
+    private Integer maximumQuantity;
 }
