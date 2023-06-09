@@ -2,6 +2,7 @@ package com.revature.marstown.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -21,6 +22,9 @@ import lombok.Setter;
 public class CartMenuItemOffer {
     @Id
     private String id;
+
+    @Column
+    private Integer quantity;
 
     @ManyToOne
     @JoinColumn(name = "cart_id")
