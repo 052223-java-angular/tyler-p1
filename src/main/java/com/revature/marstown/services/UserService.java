@@ -22,6 +22,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class UserService {
     private final RoleService roleService;
+    private final CartService cartService;
     private final UserRepository userRepo;
 
     /**
@@ -39,6 +40,11 @@ public class UserService {
 
         // create new user
         User newUser = new User(req.getUsername(), hashed, foundRole);
+
+        User savedUser = userRepo.save(newUser);
+
+        // create cart for new user
+        cartService.createCart(savedUser.getId());
 
         // save and return user
         return userRepo.save(newUser);

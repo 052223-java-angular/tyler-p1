@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,6 +38,9 @@ public class User {
     @JoinColumn(name = "role_id")
     @JsonBackReference
     private Role role;
+
+    @OneToOne(mappedBy = "user")
+    private Cart cart;
 
     public User(String username, String password, Role role) {
         this.id = UUID.randomUUID().toString();
