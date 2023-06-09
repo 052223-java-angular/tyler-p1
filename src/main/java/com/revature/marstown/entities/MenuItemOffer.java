@@ -40,10 +40,10 @@ public class MenuItemOffer {
     @JsonBackReference
     private MenuItem menuItem;
 
-    @Column(name = "max_quantity")
+    @Column(name = "min_quantity")
     private Integer minimumQuantity;
 
-    @Column(name = "min_quantity")
+    @Column(name = "max_quantity")
     private Integer maximumQuantity;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "menuItemOffer")
