@@ -1,5 +1,6 @@
 package com.revature.marstown.services;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -44,5 +45,15 @@ public class CartService {
         }
 
         throw new CartNotFoundException("Cart not found!");
+    }
+
+    public Cart getCartByUserId(String userId) {
+        Optional<Cart> cartOptional = cartRepository.findByUserId(userId);
+
+        if (cartOptional.isPresent()) {
+            return cartOptional.get();
+        }
+
+        throw new CartNotFoundException("Cart not found for user id!");
     }
 }
