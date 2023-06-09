@@ -342,10 +342,61 @@ INSERT INTO menu_items (
     'menu-marstown-section-burger-combo-sides'
 );
 
+-- Burger Combo Beverages Section
+INSERT INTO menu_sections (
+    id,
+    display_order,
+    max_quantity,
+    min_quantity,
+    menu_id,
+    parent_menu_item_id,
+    section_id
+) VALUES (
+    'menu-marstown-section-burger-combo-beverages',
+    4,
+    1,
+    1,
+    'menu-marstown',
+    'menu-marstown-item-burger-combo',
+    'section-beverages'
+);
+
+INSERT INTO menu_items (
+    id,
+    display_order,
+    item_id,
+    menu_section_id
+) VALUES (
+    'menu-marstown-item-burger-combo-beverages-shake-mars',
+    1,
+    'shake-mars',
+    'menu-marstown-section-burger-combo-beverages'
+), (
+    'menu-marstown-item-burger-combo-beverages-fountain-drink-medium',
+    2,
+    'fountain-drink-medium',
+    'menu-marstown-section-burger-combo-beverages'
+), (
+    'menu-marstown-item-burger-combo-beverages-fountain-drink-large',
+    3,
+    'fountain-drink-large',
+    'menu-marstown-section-burger-combo-beverages'
+);
+
 
 /*
 
 ROLLBACK:
+
+DELETE FROM menu_items WHERE id IN (
+    'menu-marstown-item-burger-combo-beverages-shake-mars',
+    'menu-marstown-item-burger-combo-beverages-fountain-drink-medium',
+    'menu-marstown-item-burger-combo-beverages-fountain-drink-large'
+);
+
+DELETE FROM menu_sections WHERE id IN (
+    'menu-marstown-section-burger-combo-beverages'
+);
 
 DELETE FROM menu_items WHERE id IN (
     'menu-marstown-item-burger-combo-sides-fries',
