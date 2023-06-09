@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.revature.marstown.dtos.requests.NewCartMenuItemOfferRequst;
+import com.revature.marstown.dtos.requests.NewCartMenuItemOfferRequest;
 import com.revature.marstown.dtos.responses.CartMenuItemOfferResponse;
 import com.revature.marstown.services.CartService;
 import com.revature.marstown.services.JwtTokenService;
@@ -23,7 +23,7 @@ public class CartController {
 
     @PostMapping("/menuitemoffers")
     public ResponseEntity<CartMenuItemOfferResponse> addMenuItemOfferToCart(
-            @RequestBody NewCartMenuItemOfferRequst request) {
+            @RequestBody NewCartMenuItemOfferRequest request) {
         String userId = jwtTokenService.extractUserId(request.getToken());
 
         if (userId != null) {

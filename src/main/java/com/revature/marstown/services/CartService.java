@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.revature.marstown.dtos.requests.NewCartMenuItemOfferRequst;
+import com.revature.marstown.dtos.requests.NewCartMenuItemOfferRequest;
 import com.revature.marstown.entities.Cart;
 import com.revature.marstown.entities.CartMenuItemOffer;
 import com.revature.marstown.entities.MenuItemOffer;
@@ -29,16 +29,17 @@ public class CartService {
         return cartRepository.save(cart);
     }
 
-    public CartMenuItemOffer addMenuItemOfferToCart(NewCartMenuItemOfferRequst request) {
-        var cartMenuItemOffer = new CartMenuItemOffer();
-        cartMenuItemOffer.setId(UUID.randomUUID().toString());
+    public CartMenuItemOffer addMenuItemOfferToCart(NewCartMenuItemOfferRequest request) {
         var cart = cartRepository.findById(request.getCartId());
         if (cart.isPresent()) {
+            var cartMenuItemOffer = new CartMenuItemOffer();
+            cartMenuItemOffer.setId(UUID.randomUUID().toString());
             var extractedCart = cart.get();
             cartMenuItemOffer.setCart(extractedCart);
             var menuItemOffer = new MenuItemOffer();
             menuItemOffer.setId(request.getMenuItemOfferId());
             cartMenuItemOffer.setMenuItemOffer(menuItemOffer);
+            cartMenuItemOffer.setQuantity(request.getQuantity());
             return cartMenuItemOfferRepository.save(cartMenuItemOffer);
         }
 
