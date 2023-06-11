@@ -45,6 +45,16 @@ public class CartService {
         throw new CartNotFoundException("Cart not found for user id!");
     }
 
+    public Cart getById(String id) {
+        Optional<Cart> cartOptional = cartRepository.findById(id);
+
+        if (cartOptional.isEmpty()) {
+            throw new CartNotFoundException("Cart not found for id");
+        }
+
+        return cartOptional.get();
+    }
+
     public CartMenuItemOffer addMenuItemOfferToCart(NewCartMenuItemOfferRequest request) {
 
         if (request.getCartId() == null) {

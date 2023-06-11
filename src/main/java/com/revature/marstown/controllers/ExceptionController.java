@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.revature.marstown.utils.custom_exceptions.CartMenuItemOfferNotFoundException;
 import com.revature.marstown.utils.custom_exceptions.InvalidCartForUserException;
 import com.revature.marstown.utils.custom_exceptions.InvalidQuantityException;
+import com.revature.marstown.utils.custom_exceptions.JwtExpiredException;
 import com.revature.marstown.utils.custom_exceptions.MenuItemOfferAlreadyInCartException;
 import com.revature.marstown.utils.custom_exceptions.MenuItemOfferNotFoundException;
 import com.revature.marstown.utils.custom_exceptions.ResourceConflictException;
@@ -114,6 +115,15 @@ public class ExceptionController {
         Map<String, Object> map = new HashMap<>();
         map.put("timestamp", new Date(System.currentTimeMillis()));
         map.put("message", e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(map);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(map);
+    }
+
+    @ExceptionHandler(JwtExpiredException.class)
+    public ResponseEntity<Map<String, Object>> handleJwtExpiredException(
+            JwtExpiredException e) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("timestamp", new Date(System.currentTimeMillis()));
+        map.put("message", e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(map);
     }
 }
