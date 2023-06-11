@@ -2,15 +2,17 @@ package com.revature.marstown.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.revature.marstown.dtos.requests.GetCartRequest;
 import com.revature.marstown.dtos.requests.NewCartMenuItemOfferRequest;
 import com.revature.marstown.dtos.requests.RemoveCartMenuItemOfferRequest;
 import com.revature.marstown.dtos.responses.CartMenuItemOfferResponse;
+import com.revature.marstown.dtos.responses.CartResponse;
 import com.revature.marstown.services.CartService;
 import com.revature.marstown.services.JwtTokenService;
 import com.revature.marstown.utils.custom_exceptions.InvalidCartForUserException;
@@ -25,6 +27,27 @@ import lombok.AllArgsConstructor;
 public class CartController {
     private final CartService cartService;
     private final JwtTokenService jwtTokenService;
+
+    @GetMapping("/")
+    public ResponseEntity<CartResponse> getCart(@RequestBody GetCartRequest request) {
+        String userId = jwtTokenService.extractUserId(request.getToken());
+
+        if (userId == null) {
+            throw new JwtExpiredException("JWT Token expired");
+        }
+
+        if (request.getCartId() == null) {
+            throw new ResourceConflictException("Cart id cannot be null");
+        }
+
+        var cart = cartService.getById(request.getCartId());
+
+        if (!cart.getUser().getId().equals(userId)) {
+            throw new InvalidCartForUserException("Invalid cart for user!");
+        }
+
+        return ResponseEntity.ok(new CartResponse(cart));
+    }
 
     @PostMapping("/menuitemoffers")
     public ResponseEntity<CartMenuItemOfferResponse> addMenuItemOfferToCart(
