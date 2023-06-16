@@ -312,7 +312,7 @@ INSERT INTO menu_sections (
     1,
     'menu-marstown',
     'menu-marstown-item-burger-combo',
-    'section-burger-extras'
+    'section-burger-combo-sides'
 );
 
 INSERT INTO menu_items (
