@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.revature.marstown.utils.custom_exceptions.CartMenuItemOfferNotFoundException;
+import com.revature.marstown.utils.custom_exceptions.InvalidAuthorizationException;
 import com.revature.marstown.utils.custom_exceptions.InvalidCartForUserException;
 import com.revature.marstown.utils.custom_exceptions.InvalidQuantityException;
 import com.revature.marstown.utils.custom_exceptions.JwtExpiredException;
@@ -135,5 +136,14 @@ public class ExceptionController {
         map.put("timestamp", new Date(System.currentTimeMillis()));
         map.put("message", e.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(map);
+    }
+
+    @ExceptionHandler(InvalidAuthorizationException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidAuthorizationException(
+            InvalidAuthorizationException e) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("timestamp", new Date(System.currentTimeMillis()));
+        map.put("message", e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(map);
     }
 }

@@ -10,8 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class NewCartMenuItemOfferRequest {
-    private String cartId;
     private String menuItemOfferId;
     private Integer quantity;
-    private String token;
 }

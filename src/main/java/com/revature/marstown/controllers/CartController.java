@@ -1,26 +1,32 @@
 package com.revature.marstown.controllers;
 
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.revature.marstown.dtos.requests.GetCartRequest;
 import com.revature.marstown.dtos.requests.NewCartMenuItemOfferRequest;
 import com.revature.marstown.dtos.requests.RemoveCartMenuItemOfferRequest;
 import com.revature.marstown.dtos.responses.CartMenuItemOfferResponse;
 import com.revature.marstown.dtos.responses.CartResponse;
 import com.revature.marstown.services.CartService;
 import com.revature.marstown.services.JwtTokenService;
+import com.revature.marstown.utils.ControllerUtil;
 import com.revature.marstown.utils.custom_exceptions.InvalidCartForUserException;
 import com.revature.marstown.utils.custom_exceptions.JwtExpiredException;
 import com.revature.marstown.utils.custom_exceptions.ResourceConflictException;
 
 import lombok.AllArgsConstructor;
 
+@CrossOrigin
 @AllArgsConstructor
 @RestController
 @RequestMapping("/cart")
@@ -29,18 +35,16 @@ public class CartController {
     private final JwtTokenService jwtTokenService;
 
     @GetMapping("/")
-    public ResponseEntity<CartResponse> getCart(@RequestBody GetCartRequest request) {
-        String userId = jwtTokenService.extractUserId(request.getToken());
+    public ResponseEntity<CartResponse> getCart(
+            @RequestHeader Map<String, String> headers) {
+        String token = ControllerUtil.extractJwtTokenFromAuthorizationHeader(headers);
+        String userId = jwtTokenService.extractUserId(token);
 
         if (userId == null) {
             throw new JwtExpiredException("JWT Token expired");
         }
 
-        if (request.getCartId() == null) {
-            throw new ResourceConflictException("Cart id cannot be null");
-        }
-
-        var cart = cartService.getById(request.getCartId());
+        var cart = cartService.getCartByUserId(userId);
 
         if (!cart.getUser().getId().equals(userId)) {
             throw new InvalidCartForUserException("Invalid cart for user!");
@@ -51,42 +55,72 @@ public class CartController {
 
     @PostMapping("/menuitemoffers")
     public ResponseEntity<CartMenuItemOfferResponse> addMenuItemOfferToCart(
+            @RequestHeader Map<String, String> headers,
             @RequestBody NewCartMenuItemOfferRequest request) {
-        String userId = jwtTokenService.extractUserId(request.getToken());
-
-        if (userId != null) {
-            // verify user id matches cart's user id
-            var cart = cartService.getCartByUserId(userId);
-            if (!cart.getUser().getId().equals(userId)) {
-                throw new InvalidCartForUserException("Invalid cart for user!");
-            }
-            return ResponseEntity.ok(new CartMenuItemOfferResponse(cartService.addMenuItemOfferToCart(request)));
-        } else {
-            throw new JwtExpiredException("JWT Token expired!");
-        }
-
-    }
-
-    @DeleteMapping("/menuitemoffers")
-    public ResponseEntity<?> removeMenuItemOfferFromCart(
-            @RequestBody RemoveCartMenuItemOfferRequest request) {
-        if (request.getId() == null) {
-            throw new ResourceConflictException("CartMenuItemOffer id is null!");
-        }
-
-        String userId = jwtTokenService.extractUserId(request.getToken());
+        String token = ControllerUtil.extractJwtTokenFromAuthorizationHeader(headers);
+        String userId = jwtTokenService.extractUserId(token);
 
         if (userId == null) {
-            throw new JwtExpiredException("JWT Token expired!");
+            throw new JwtExpiredException("JWT Token expired");
         }
 
-        // verify user id matches cart's user id
         var cart = cartService.getCartByUserId(userId);
+
         if (!cart.getUser().getId().equals(userId)) {
             throw new InvalidCartForUserException("Invalid cart for user!");
         }
 
-        cartService.removeMenuItemOfferFromCart(request.getId());
+        return ResponseEntity.ok(new CartMenuItemOfferResponse(cartService.addMenuItemOfferToCart(userId, request)));
+
+    }
+
+    @DeleteMapping("/menuitemoffers/{cartMenuItemOfferId}")
+    public ResponseEntity<?> removeMenuItemOfferFromCart(
+            @RequestHeader Map<String, String> headers,
+            @PathVariable String cartMenuItemOfferId) {
+        if (cartMenuItemOfferId == null) {
+            throw new ResourceConflictException("CartMenuItemOffer id is null!");
+        }
+
+        String token = ControllerUtil.extractJwtTokenFromAuthorizationHeader(headers);
+        String userId = jwtTokenService.extractUserId(token);
+
+        if (userId == null) {
+            throw new JwtExpiredException("JWT Token expired");
+        }
+
+        var cart = cartService.getCartByUserId(userId);
+
+        if (!cart.getUser().getId().equals(userId)) {
+            throw new InvalidCartForUserException("Invalid cart for user!");
+        }
+
+        cartService.removeCartMenuItemOffer(cartMenuItemOfferId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/menuitemoffers/{menuItemOfferId}")
+    public ResponseEntity<CartMenuItemOfferResponse> getCartMenuItemOffer(
+            @RequestHeader Map<String, String> headers,
+            @PathVariable String menuItemOfferId) {
+        String token = ControllerUtil.extractJwtTokenFromAuthorizationHeader(headers);
+        String userId = jwtTokenService.extractUserId(token);
+
+        if (userId == null) {
+            throw new JwtExpiredException("JWT Token expired");
+        }
+
+        var cart = cartService.getCartByUserId(userId);
+
+        if (!cart.getUser().getId().equals(userId)) {
+            throw new InvalidCartForUserException("Invalid cart for user!");
+        }
+
+        var existingCartMenuItemOffer = cartService.getExistingCartMenuItemOffer(cart.getId(), menuItemOfferId);
+        if (existingCartMenuItemOffer.isPresent()) {
+            return ResponseEntity.ok(new CartMenuItemOfferResponse(existingCartMenuItemOffer.get()));
+        } else {
+            return ResponseEntity.ok(null);
+        }
     }
 }
