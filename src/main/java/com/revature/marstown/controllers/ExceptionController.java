@@ -17,6 +17,7 @@ import com.revature.marstown.utils.custom_exceptions.MenuItemOfferAlreadyInCartE
 import com.revature.marstown.utils.custom_exceptions.MenuItemOfferNotFoundException;
 import com.revature.marstown.utils.custom_exceptions.ResourceConflictException;
 import com.revature.marstown.utils.custom_exceptions.RoleNotFoundException;
+import com.revature.marstown.utils.custom_exceptions.TokenRefreshException;
 import com.revature.marstown.utils.custom_exceptions.UserNotFoundException;
 
 @RestControllerAdvice
@@ -125,5 +126,14 @@ public class ExceptionController {
         map.put("timestamp", new Date(System.currentTimeMillis()));
         map.put("message", e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(map);
+    }
+
+    @ExceptionHandler(TokenRefreshException.class)
+    public ResponseEntity<Map<String, Object>> handleTokenRefreshException(
+            TokenRefreshException e) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("timestamp", new Date(System.currentTimeMillis()));
+        map.put("message", e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(map);
     }
 }

@@ -56,7 +56,7 @@ public class UserService {
         if (userOpt.isPresent()) {
             User foundUser = userOpt.get();
             if (BCrypt.checkpw(req.getPassword(), foundUser.getPassword())) {
-                return new Principal(foundUser);
+                return new Principal("", "", foundUser);
             }
         }
 

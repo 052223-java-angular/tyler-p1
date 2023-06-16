@@ -5,14 +5,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.revature.marstown.dtos.responses.Principal;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.SignatureException;
 
 /**
  * Service class for handling JWT token generation and validation.
@@ -21,6 +27,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class JwtTokenService {
     @Value("${jwt.secret}")
     private String SECRET_KEY;
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenService.class);
 
     /**
      * Generates a JWT token based on the provided user principal.
@@ -50,9 +57,27 @@ public class JwtTokenService {
      * @param userPrincipal The user principal to compare against.
      * @return true if the token is valid for the user principal, false otherwise.
      */
-    public boolean validateToken(String token, Principal userPrincipal) {
-        String tokenUsername = extractUsername(token);
-        return tokenUsername.equals(userPrincipal.getUsername());
+    // public boolean validateToken(String token, Principal userPrincipal) {
+    // String tokenUsername = extractUsername(token);
+    // return tokenUsername.equals(userPrincipal.getUsername());
+    // }
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
+            return true;
+        } catch (SignatureException e) {
+            logger.error("Invalid JWT signature: {}", e.getMessage());
+        } catch (MalformedJwtException e) {
+            logger.error("Invalid JWT token: {}", e.getMessage());
+        } catch (ExpiredJwtException e) {
+            logger.error("JWT token is expired: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            logger.error("JWT token is unsupported: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            logger.error("JWT claims string is empty: {}", e.getMessage());
+        }
+
+        return false;
     }
 
     /**

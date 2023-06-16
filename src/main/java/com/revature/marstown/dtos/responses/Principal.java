@@ -19,9 +19,13 @@ public class Principal {
     private String id;
     private String username;
     private String role;
-    private String token;
+    private String accessToken;
+    private String refreshToken;
+    private String type = "Bearer";
 
-    public Principal(User user) {
+    public Principal(String accessToken, String refreshToken, User user) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
         this.id = user.getId();
         this.username = user.getUsername();
         this.role = user.getRole().getName();
