@@ -3,6 +3,7 @@ package com.revature.marstown.controllers;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import com.revature.marstown.utils.custom_exceptions.ResourceConflictException;
 
 import lombok.AllArgsConstructor;
 
+@CrossOrigin
 @AllArgsConstructor
 @RestController
 @RequestMapping("/menu")

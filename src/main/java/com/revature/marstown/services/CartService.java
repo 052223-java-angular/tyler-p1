@@ -17,6 +17,7 @@ import com.revature.marstown.utils.custom_exceptions.CartNotFoundException;
 import com.revature.marstown.utils.custom_exceptions.InvalidQuantityException;
 import com.revature.marstown.utils.custom_exceptions.MenuItemOfferAlreadyInCartException;
 import com.revature.marstown.utils.custom_exceptions.MenuItemOfferNotFoundException;
+import com.revature.marstown.utils.custom_exceptions.UserNotFoundException;
 
 import lombok.AllArgsConstructor;
 
@@ -55,13 +56,13 @@ public class CartService {
         return cartOptional.get();
     }
 
-    public CartMenuItemOffer addMenuItemOfferToCart(NewCartMenuItemOfferRequest request) {
+    public CartMenuItemOffer addMenuItemOfferToCart(String userId, NewCartMenuItemOfferRequest request) {
 
-        if (request.getCartId() == null) {
-            throw new CartNotFoundException("Cart not found!");
+        if (userId == null) {
+            throw new UserNotFoundException("User not found!");
         }
 
-        var cart = cartRepository.findById(request.getCartId());
+        var cart = cartRepository.findByUserId(userId);
 
         if (cart.isEmpty()) {
             throw new CartNotFoundException("Cart not found!");
@@ -73,7 +74,7 @@ public class CartService {
             throw new MenuItemOfferNotFoundException("MenuItemOffer not found!");
         }
 
-        var existingCartMenuItemOffer = cartMenuItemOfferRepository.findByCartIdAndMenuItemOfferId(request.getCartId(),
+        var existingCartMenuItemOffer = cartMenuItemOfferRepository.findByCartIdAndMenuItemOfferId(cart.get().getId(),
                 request.getMenuItemOfferId());
 
         if (existingCartMenuItemOffer.isPresent()) {
@@ -103,7 +104,7 @@ public class CartService {
         return cartMenuItemOfferRepository.save(cartMenuItemOffer);
     }
 
-    public void removeMenuItemOfferFromCart(String cartMenuItemOfferId) {
+    public void removeCartMenuItemOffer(String cartMenuItemOfferId) {
         if (cartMenuItemOfferId == null) {
             /* throw exception */
         }
@@ -115,5 +116,10 @@ public class CartService {
         }
 
         cartMenuItemOfferRepository.deleteById(cartMenuItemOfferId);
+    }
+
+    public Optional<CartMenuItemOffer> getExistingCartMenuItemOffer(String cartId, String menuItemOfferId) {
+        return cartMenuItemOfferRepository.findByCartIdAndMenuItemOfferId(cartId,
+                menuItemOfferId);
     }
 }

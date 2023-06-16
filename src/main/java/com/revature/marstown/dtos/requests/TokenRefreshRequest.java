@@ -9,7 +9,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class NewCartMenuItemOfferRequest {
-    private String menuItemOfferId;
-    private Integer quantity;
+public class TokenRefreshRequest {
+    private String refreshToken;
 }
