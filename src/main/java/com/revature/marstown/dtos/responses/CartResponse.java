@@ -24,10 +24,7 @@ public class CartResponse {
         this.id = cart.getId();
         var cartMenuItemOffers = cart.getCartMenuItemOffers();
         var cartMenuItemOffersList = new ArrayList<>(cartMenuItemOffers);
-
-        if (cartMenuItemOffersList.size() > 0) {
-            cartMenuItemOfferResponses = new ArrayList<>();
-        }
+        cartMenuItemOfferResponses = new ArrayList<>();
 
         while (cartMenuItemOffersList.size() > 0) {
             var currentMenuItemOffer = cartMenuItemOffersList.get(0);

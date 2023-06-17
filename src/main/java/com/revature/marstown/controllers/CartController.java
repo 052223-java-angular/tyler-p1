@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.marstown.dtos.requests.NewCartMenuItemOfferRequest;
-import com.revature.marstown.dtos.requests.RemoveCartMenuItemOfferRequest;
 import com.revature.marstown.dtos.responses.CartMenuItemOfferResponse;
 import com.revature.marstown.dtos.responses.CartResponse;
 import com.revature.marstown.services.CartService;
@@ -35,8 +34,7 @@ public class CartController {
     private final JwtTokenService jwtTokenService;
 
     @GetMapping("/")
-    public ResponseEntity<CartResponse> getCart(
-            @RequestHeader Map<String, String> headers) {
+    public ResponseEntity<CartResponse> getCart(@RequestHeader Map<String, String> headers) {
         String token = ControllerUtil.extractJwtTokenFromAuthorizationHeader(headers);
         String userId = jwtTokenService.extractUserId(token);
 
