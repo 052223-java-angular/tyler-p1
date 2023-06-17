@@ -74,13 +74,6 @@ public class CartService {
             throw new MenuItemOfferNotFoundException("MenuItemOffer not found!");
         }
 
-        var existingCartMenuItemOffer = cartMenuItemOfferRepository.findByCartIdAndMenuItemOfferId(cart.get().getId(),
-                request.getMenuItemOfferId());
-
-        if (existingCartMenuItemOffer.isPresent()) {
-            throw new MenuItemOfferAlreadyInCartException("MenuItemOffer already in cart!");
-        }
-
         if (request.getQuantity() == null) {
             throw new InvalidQuantityException("Quantity cannot be null!");
         }
