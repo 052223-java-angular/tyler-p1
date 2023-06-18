@@ -19,12 +19,14 @@ public class MenuItemOfferResponse {
     private BigDecimal price;
     private Integer maxmiumQuantity;
     private Integer minimumQuantity;
+    private String stripePriceId;
 
     public MenuItemOfferResponse(MenuItemOffer menuItemOffer) {
         this.id = menuItemOffer.getId();
         this.currency = menuItemOffer.getPriceCurrency();
         this.price = menuItemOffer.getPrice();
         this.maxmiumQuantity = menuItemOffer.getMaximumQuantity();
-        this.minimumQuantity = menuItemOffer.getMaximumQuantity();
+        this.minimumQuantity = menuItemOffer.getMinimumQuantity();
+        this.stripePriceId = menuItemOffer.getStripePriceId();
     }
 }

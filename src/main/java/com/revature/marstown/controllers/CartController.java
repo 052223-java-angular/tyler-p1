@@ -2,6 +2,7 @@ package com.revature.marstown.controllers;
 
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,12 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.revature.marstown.dtos.requests.NewCartMenuItemOfferRequest;
 import com.revature.marstown.dtos.responses.CartMenuItemOfferResponse;
 import com.revature.marstown.dtos.responses.CartResponse;
+import com.revature.marstown.dtos.responses.CheckoutResponse;
 import com.revature.marstown.services.CartService;
 import com.revature.marstown.services.JwtTokenService;
+import com.revature.marstown.services.StripeService;
 import com.revature.marstown.utils.ControllerUtil;
 import com.revature.marstown.utils.custom_exceptions.InvalidCartForUserException;
 import com.revature.marstown.utils.custom_exceptions.JwtExpiredException;
 import com.revature.marstown.utils.custom_exceptions.ResourceConflictException;
+import com.stripe.exception.StripeException;
+import com.stripe.model.checkout.Session;
 
 import lombok.AllArgsConstructor;
 
@@ -32,6 +37,7 @@ import lombok.AllArgsConstructor;
 public class CartController {
     private final CartService cartService;
     private final JwtTokenService jwtTokenService;
+    private final StripeService stripeService;
 
     @GetMapping("/")
     public ResponseEntity<CartResponse> getCart(@RequestHeader Map<String, String> headers) {
@@ -120,5 +126,25 @@ public class CartController {
         } else {
             return ResponseEntity.ok(null);
         }
+    }
+
+    @PostMapping("/checkout")
+    public ResponseEntity<CheckoutResponse> createCheckoutSession(
+            @RequestHeader Map<String, String> headers) throws StripeException {
+        String token = ControllerUtil.extractJwtTokenFromAuthorizationHeader(headers);
+        String userId = jwtTokenService.extractUserId(token);
+
+        if (userId == null) {
+            throw new JwtExpiredException("JWT Token expired");
+        }
+
+        var cart = cartService.getCartByUserId(userId);
+
+        if (!cart.getUser().getId().equals(userId)) {
+            throw new InvalidCartForUserException("Invalid cart for user!");
+        }
+
+        Session session = stripeService.createCheckoutSession();
+        return ResponseEntity.ok(new CheckoutResponse(session.getUrl()));
     }
 }
