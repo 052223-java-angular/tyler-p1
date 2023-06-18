@@ -106,5 +106,3 @@ public class AuthController {
                 .orElseThrow(() -> new TokenRefreshException("Refresh token is not in database!"));
     }
 }
-
-// return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT).body();
