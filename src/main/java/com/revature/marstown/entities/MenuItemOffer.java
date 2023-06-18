@@ -49,4 +49,7 @@ public class MenuItemOffer {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "menuItemOffer")
     @JsonManagedReference
     private Set<CartMenuItemOffer> cartMenuItemOffers;
+
+    @Column(name = "stripe_price_id")
+    private String stripePriceId;
 }

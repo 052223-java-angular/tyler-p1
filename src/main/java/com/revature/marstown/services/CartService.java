@@ -15,7 +15,6 @@ import com.revature.marstown.repositories.MenuItemOfferRepository;
 import com.revature.marstown.utils.custom_exceptions.CartMenuItemOfferNotFoundException;
 import com.revature.marstown.utils.custom_exceptions.CartNotFoundException;
 import com.revature.marstown.utils.custom_exceptions.InvalidQuantityException;
-import com.revature.marstown.utils.custom_exceptions.MenuItemOfferAlreadyInCartException;
 import com.revature.marstown.utils.custom_exceptions.MenuItemOfferNotFoundException;
 import com.revature.marstown.utils.custom_exceptions.UserNotFoundException;
 
