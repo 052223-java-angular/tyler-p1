@@ -47,7 +47,7 @@ public class UserService {
         cartService.createCart(savedUser.getId());
 
         // save and return user
-        return userRepo.save(newUser);
+        return savedUser;
     }
 
     public Principal login(NewLoginRequest req) {

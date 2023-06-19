@@ -1,5 +1,6 @@
 package com.revature.marstown.services;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,8 @@ import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 
 import com.revature.marstown.dtos.responses.StripePricesResponse;
+import com.revature.marstown.entities.Cart;
+import com.revature.marstown.entities.CartMenuItemOffer;
 import com.revature.marstown.utils.ControllerUtil;
 
 @Service
@@ -52,16 +55,22 @@ public class StripeService {
         }
     }
 
-    public Session createCheckoutSession() throws StripeException {
+    public Session createCheckoutSession(String userId, Cart cart) throws StripeException {
         Stripe.apiKey = STRIPE_API_KEY;
+        List<SessionCreateParams.LineItem> lineItems = new ArrayList<SessionCreateParams.LineItem>();
+        for (CartMenuItemOffer cartMenuItemOffer : cart.getCartMenuItemOffers()) {
+            lineItems.add(SessionCreateParams.LineItem.builder()
+                    .setQuantity(Long.valueOf(cartMenuItemOffer.getQuantity()))
+                    .setPrice(cartMenuItemOffer.getMenuItemOffer().getStripePriceId()).build());
+        }
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setSuccessUrl(FRONTEND_URL + "/checkout/success")
                 .setCancelUrl(FRONTEND_URL + "/cart")
-                .addLineItem(
-                        SessionCreateParams.LineItem.builder()
-                                .setQuantity(1L)
-                                .setPrice("price_1NKNk4AT9USe7yEj2TcOb8Sw")
+                .addAllLineItem(lineItems)
+                .setPaymentIntentData(
+                        SessionCreateParams.PaymentIntentData.builder()
+                                .putMetadata("user_id", userId)
                                 .build())
                 .build();
         Session session = Session.create(params);

@@ -15,6 +15,9 @@ public class ControllerUtil {
         String authorizationHeader = headers.get(AUTHORIZATION_HEADER_KEY);
 
         String BEARER = "Bearer ";
+        if (authorizationHeader == null) {
+            throw new InvalidAuthorizationException("Invalid Authorization header!");
+        }
         if (authorizationHeader.startsWith(BEARER)) {
             return authorizationHeader.substring(BEARER.length());
         }
