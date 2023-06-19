@@ -2,7 +2,9 @@ package com.revature.marstown.controllers;
 
 import java.util.Map;
 
-import org.springframework.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,10 +16,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.revature.marstown.dtos.requests.FulfillmentRequest;
 import com.revature.marstown.dtos.requests.NewCartMenuItemOfferRequest;
 import com.revature.marstown.dtos.responses.CartMenuItemOfferResponse;
 import com.revature.marstown.dtos.responses.CartResponse;
 import com.revature.marstown.dtos.responses.CheckoutResponse;
+import com.revature.marstown.entities.Cart;
+import com.revature.marstown.entities.CartMenuItemOffer;
 import com.revature.marstown.services.CartService;
 import com.revature.marstown.services.JwtTokenService;
 import com.revature.marstown.services.StripeService;
@@ -38,6 +43,7 @@ public class CartController {
     private final CartService cartService;
     private final JwtTokenService jwtTokenService;
     private final StripeService stripeService;
+    private static final Logger logger = LoggerFactory.getLogger(CartController.class);
 
     @GetMapping("/")
     public ResponseEntity<CartResponse> getCart(@RequestHeader Map<String, String> headers) {
@@ -138,13 +144,44 @@ public class CartController {
             throw new JwtExpiredException("JWT Token expired");
         }
 
-        var cart = cartService.getCartByUserId(userId);
+        Cart cart = cartService.getCartByUserId(userId);
 
         if (!cart.getUser().getId().equals(userId)) {
             throw new InvalidCartForUserException("Invalid cart for user!");
         }
 
-        Session session = stripeService.createCheckoutSession();
+        Session session = stripeService.createCheckoutSession(userId, cart);
         return ResponseEntity.ok(new CheckoutResponse(session.getUrl()));
     }
+
+    @PostMapping("/fulfillment")
+    public ResponseEntity<?> orderFulfillment(
+            @RequestHeader Map<String, String> headers,
+            @RequestBody FulfillmentRequest request) {
+
+        logger.info("Inside fulfillment");
+
+        var metadata = request.getData().getObject().getMetadata();
+        if (metadata != null) {
+            var userId = metadata.get("user_id");
+            if (userId != null) {
+                var cart = cartService.getCartByUserId(userId);
+
+                if (!cart.getUser().getId().equals(userId)) {
+                    throw new InvalidCartForUserException("Invalid cart for user!");
+                }
+
+                // TODO: Convert cart menu item offers to order menu item offers and tie to
+                // order
+
+                // Remove cart menu item offers from cart
+                for (CartMenuItemOffer cartMenuItemOffer : cart.getCartMenuItemOffers()) {
+                    cartService.removeCartMenuItemOffer(cartMenuItemOffer.getId());
+                }
+            }
+        }
+
+        return ResponseEntity.noContent().build();
+    }
+
 }
