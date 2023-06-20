@@ -104,4 +104,12 @@ public class UserService {
     public boolean isSamePassword(String password, String confirmPassword) {
         return password.equals(confirmPassword);
     }
+
+    public User getById(String userId) {
+        var user = userRepo.findById(userId);
+        if (user.isPresent()) {
+            return user.get();
+        }
+        throw new UserNotFoundException("User not found!");
+    }
 }
