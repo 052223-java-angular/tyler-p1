@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -18,7 +19,7 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
-
+import com.revature.marstown.dtos.responses.StripePriceResponse;
 import com.revature.marstown.dtos.responses.StripePricesResponse;
 import com.revature.marstown.entities.Cart;
 import com.revature.marstown.entities.CartMenuItemOffer;
@@ -32,6 +33,7 @@ public class StripeService {
     private String FRONTEND_URL;
     private String STRIPE_API_URL = "https://api.stripe.com";
 
+    @Cacheable("prices")
     public StripePricesResponse getPrices() {
         HttpHeaders headers = ControllerUtil.addAuthorizationHeader(STRIPE_API_KEY, null);
         headers.add("Accept", "application/json");
@@ -53,6 +55,15 @@ public class StripeService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public StripePriceResponse findStripePrice(String priceId, StripePricesResponse prices) {
+        for (StripePriceResponse response : prices.getData()) {
+            if (response.getId().equals(priceId)) {
+                return response;
+            }
+        }
+        return null;
     }
 
     public Session createCheckoutSession(String userId, Cart cart) throws StripeException {

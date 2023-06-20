@@ -60,7 +60,10 @@ public class CartController {
             throw new InvalidCartForUserException("Invalid cart for user!");
         }
 
-        return ResponseEntity.ok(new CartResponse(cart));
+        var cartResponse = new CartResponse(cart);
+        cartService.addStripePricesToCartResponse(cartResponse);
+
+        return ResponseEntity.ok(cartResponse);
     }
 
     @PostMapping("/menuitemoffers")
