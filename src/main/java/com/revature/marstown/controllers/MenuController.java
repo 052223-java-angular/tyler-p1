@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.revature.marstown.components.StripePrices;
 import com.revature.marstown.dtos.responses.MenuItemOfferResponse;
 import com.revature.marstown.dtos.responses.MenuItemResponse;
 import com.revature.marstown.dtos.responses.MenuResponse;
@@ -21,6 +22,7 @@ import com.revature.marstown.dtos.responses.StripePricesResponse;
 import com.revature.marstown.entities.Menu;
 import com.revature.marstown.services.MenuService;
 import com.revature.marstown.services.StripeService;
+import com.revature.marstown.utils.PriceUtil;
 import com.revature.marstown.utils.custom_exceptions.ResourceConflictException;
 
 import lombok.AllArgsConstructor;
@@ -32,11 +34,12 @@ import lombok.AllArgsConstructor;
 public class MenuController {
     private final MenuService menuService;
     private final StripeService stripeService;
+    private final StripePrices stripePrices;
 
     @GetMapping("/{id}")
     public ResponseEntity<MenuResponse> getMenuById(@PathVariable String id) {
         Optional<Menu> menu = menuService.getMenuById(id);
-        StripePricesResponse prices = stripeService.getPrices();
+        StripePricesResponse prices = stripePrices.getStripePriceResponse();
 
         if (menu.isPresent()) {
             MenuResponse menuResponse = new MenuResponse(menu.get());
@@ -53,21 +56,11 @@ public class MenuController {
             Set<MenuItemResponse> menuItems = menuSection.getMenuItems();
             for (MenuItemResponse menuItem : menuItems) {
                 MenuItemOfferResponse menuItemOffer = menuItem.getMenuItemOffers().iterator().next();
-                StripePriceResponse priceResponse = findStripePrice(menuItemOffer.getStripePriceId(), prices);
+                StripePriceResponse priceResponse = stripeService.findStripePrice(menuItemOffer.getStripePriceId(),
+                        prices);
                 String price = priceResponse.getUnit_amount_decimal();
-                String priceWithDecimal = price.substring(0, price.length() - 2) + "."
-                        + price.substring(price.length() - 2);
-                menuItemOffer.setPrice(new BigDecimal(priceWithDecimal));
+                menuItemOffer.setPrice(PriceUtil.stripePriceStringToBigDecimal(price));
             }
         }
-    }
-
-    private StripePriceResponse findStripePrice(String priceId, StripePricesResponse prices) {
-        for (StripePriceResponse response : prices.getData()) {
-            if (response.getId().equals(priceId)) {
-                return response;
-            }
-        }
-        return null;
     }
 }

@@ -5,13 +5,17 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.revature.marstown.components.StripePrices;
 import com.revature.marstown.dtos.requests.NewCartMenuItemOfferRequest;
+import com.revature.marstown.dtos.responses.CartMenuItemOfferResponse;
+import com.revature.marstown.dtos.responses.CartResponse;
 import com.revature.marstown.entities.Cart;
 import com.revature.marstown.entities.CartMenuItemOffer;
 import com.revature.marstown.entities.User;
 import com.revature.marstown.repositories.CartMenuItemOfferRepository;
 import com.revature.marstown.repositories.CartRepository;
 import com.revature.marstown.repositories.MenuItemOfferRepository;
+import com.revature.marstown.utils.PriceUtil;
 import com.revature.marstown.utils.custom_exceptions.CartMenuItemOfferNotFoundException;
 import com.revature.marstown.utils.custom_exceptions.CartNotFoundException;
 import com.revature.marstown.utils.custom_exceptions.InvalidQuantityException;
@@ -26,6 +30,8 @@ public class CartService {
     private final CartRepository cartRepository;
     private final CartMenuItemOfferRepository cartMenuItemOfferRepository;
     private final MenuItemOfferRepository menuItemOfferRepository;
+    private final StripeService stripeService;
+    private final StripePrices stripePrices;
 
     public Cart createCart(String userId) {
         User user = new User("", "", null);
@@ -113,5 +119,15 @@ public class CartService {
     public Optional<CartMenuItemOffer> getExistingCartMenuItemOffer(String cartId, String menuItemOfferId) {
         return cartMenuItemOfferRepository.findByCartIdAndMenuItemOfferId(cartId,
                 menuItemOfferId);
+    }
+
+    public void addStripePricesToCartResponse(CartResponse cartResponse) {
+        for (CartMenuItemOfferResponse cartMenuItemOffer : cartResponse.getCartMenuItemOfferResponses()) {
+            var price = stripeService.findStripePrice(cartMenuItemOffer.getStripePriceId(),
+                    stripePrices.getStripePriceResponse());
+            if (price != null) {
+                cartMenuItemOffer.setPrice(PriceUtil.stripePriceStringToBigDecimal(price.getUnit_amount_decimal()));
+            }
+        }
     }
 }
