@@ -41,13 +41,11 @@ public class UserService {
         // create new user
         User newUser = new User(req.getUsername(), hashed, foundRole);
 
-        User savedUser = userRepo.save(newUser);
-
         // create cart for new user
-        cartService.createCart(savedUser.getId());
+        cartService.createCart(newUser.getId());
 
         // save and return user
-        return savedUser;
+        return userRepo.save(newUser);
     }
 
     public Principal login(NewLoginRequest req) {
