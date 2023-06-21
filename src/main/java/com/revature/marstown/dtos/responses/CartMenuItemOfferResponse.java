@@ -28,6 +28,8 @@ public class CartMenuItemOfferResponse {
     private Integer parentMenuSectionDisplayOrder;
     private String parentMenuSectionMenuItemId;
     private Integer displayOrder;
+    private Integer maxQuantity;
+    private Integer minQuantity;
     List<CartMenuItemOfferResponse> childCartMenuItemOffers;
 
     public CartMenuItemOfferResponse(CartMenuItemOffer cartMenuItemOffer) {
@@ -49,5 +51,7 @@ public class CartMenuItemOfferResponse {
         }
         childCartMenuItemOffers = new ArrayList<>();
         this.displayOrder = menuItemOffer.getMenuItem().getDisplayOrder();
+        this.maxQuantity = menuItemOffer.getMaximumQuantity();
+        this.minQuantity = menuItemOffer.getMinimumQuantity();
     }
 }
