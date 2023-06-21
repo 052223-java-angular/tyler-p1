@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.marstown.dtos.requests.FulfillmentRequest;
 import com.revature.marstown.dtos.requests.NewCartMenuItemOfferRequest;
+import com.revature.marstown.dtos.requests.UpdateCartMenuItemOfferRequest;
 import com.revature.marstown.dtos.responses.CartMenuItemOfferResponse;
 import com.revature.marstown.dtos.responses.CartResponse;
 import com.revature.marstown.dtos.responses.CheckoutResponse;
@@ -29,6 +31,7 @@ import com.revature.marstown.services.StripeService;
 import com.revature.marstown.utils.ControllerUtil;
 import com.revature.marstown.utils.custom_exceptions.InvalidCartForUserException;
 import com.revature.marstown.utils.custom_exceptions.JwtExpiredException;
+import com.revature.marstown.utils.custom_exceptions.MenuItemOfferNotFoundException;
 import com.revature.marstown.utils.custom_exceptions.ResourceConflictException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
@@ -135,6 +138,34 @@ public class CartController {
         } else {
             return ResponseEntity.ok(null);
         }
+    }
+
+    @PatchMapping("/menuitemoffers")
+    public ResponseEntity<?> updateCartMenuItemOfferQuantity(
+            @RequestHeader Map<String, String> headers,
+            @RequestBody UpdateCartMenuItemOfferRequest request) {
+        String token = ControllerUtil.extractJwtTokenFromAuthorizationHeader(headers);
+        String userId = jwtTokenService.extractUserId(token);
+
+        if (userId == null) {
+            throw new JwtExpiredException("JWT Token expired");
+        }
+
+        var cart = cartService.getCartByUserId(userId);
+
+        if (!cart.getUser().getId().equals(userId)) {
+            throw new InvalidCartForUserException("Invalid cart for user!");
+        }
+
+        var existingCartMenuItemOffer = cartService.getExistingCartMenuItemOffer(request.getCartMenuItemOfferId());
+
+        if (!existingCartMenuItemOffer.isPresent()) {
+            throw new MenuItemOfferNotFoundException("Menu Item Offer not found!");
+        }
+
+        cartService.updateCartMenuItemOfferQuantity(existingCartMenuItemOffer.get(), request.getQuantity());
+
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/checkout")

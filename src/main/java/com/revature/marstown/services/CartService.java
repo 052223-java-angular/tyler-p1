@@ -121,6 +121,10 @@ public class CartService {
                 menuItemOfferId);
     }
 
+    public Optional<CartMenuItemOffer> getExistingCartMenuItemOffer(String cartMenuItemOfferId) {
+        return cartMenuItemOfferRepository.findById(cartMenuItemOfferId);
+    }
+
     public void addStripePricesToCartResponse(CartResponse cartResponse) {
         for (CartMenuItemOfferResponse cartMenuItemOffer : cartResponse.getCartMenuItemOfferResponses()) {
             var price = stripeService.findStripePrice(cartMenuItemOffer.getStripePriceId(),
@@ -129,5 +133,19 @@ public class CartService {
                 cartMenuItemOffer.setPrice(PriceUtil.stripePriceStringToBigDecimal(price.getUnit_amount_decimal()));
             }
         }
+    }
+
+    public void updateCartMenuItemOfferQuantity(CartMenuItemOffer cartMenuItemOffer, int quantity) {
+        if (cartMenuItemOffer.getMenuItemOffer().getMinimumQuantity() > quantity) {
+            throw new InvalidQuantityException("Quantity is too low!");
+        }
+
+        if (cartMenuItemOffer.getMenuItemOffer().getMaximumQuantity() < quantity) {
+            throw new InvalidQuantityException("Quantity is too high!");
+        }
+
+        cartMenuItemOffer.setQuantity(quantity);
+
+        cartMenuItemOfferRepository.save(cartMenuItemOffer);
     }
 }

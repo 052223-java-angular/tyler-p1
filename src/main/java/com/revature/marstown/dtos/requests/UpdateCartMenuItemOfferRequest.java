@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class RemoveCartMenuItemOfferRequest {
-    private String id;
-    private String token;
+public class UpdateCartMenuItemOfferRequest {
+    private String cartMenuItemOfferId;
+    private Integer quantity;
 }
