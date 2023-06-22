@@ -165,6 +165,10 @@ public class CartController {
 
         cartService.updateCartMenuItemOfferQuantity(existingCartMenuItemOffer.get(), request.getQuantity());
 
+        for (CartMenuItemOffer child : existingCartMenuItemOffer.get().getChildCartMenuItemOffers()) {
+            cartService.updateCartMenuItemOfferQuantity(child, request.getQuantity());
+        }
+
         return ResponseEntity.noContent().build();
     }
 

@@ -2,8 +2,13 @@ package com.revature.marstown.services;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -69,11 +74,34 @@ public class StripeService {
     public Session createCheckoutSession(String userId, Cart cart) throws StripeException {
         Stripe.apiKey = STRIPE_API_KEY;
         List<SessionCreateParams.LineItem> lineItems = new ArrayList<SessionCreateParams.LineItem>();
-        for (CartMenuItemOffer cartMenuItemOffer : cart.getCartMenuItemOffers()) {
+        var topLevelCartMenuItemOffers = cart.getCartMenuItemOffers().stream()
+                .filter(x -> x.getParentCartMenuItemOffer() == null)
+                .collect(Collectors.toList());
+        for (var topOffer : topLevelCartMenuItemOffers) {
             lineItems.add(SessionCreateParams.LineItem.builder()
-                    .setQuantity(Long.valueOf(cartMenuItemOffer.getQuantity()))
-                    .setPrice(cartMenuItemOffer.getMenuItemOffer().getStripePriceId()).build());
+                    .setQuantity(Long.valueOf(topOffer.getQuantity()))
+                    .setPrice(topOffer.getMenuItemOffer().getStripePriceId()).build());
+            Map<Integer, Set<CartMenuItemOffer>> map = new HashMap<>();
+            for (var childOffer : topOffer.getChildCartMenuItemOffers()) {
+                var displayOrder = childOffer.getMenuItemOffer().getMenuItem().getParentMenuSection().getDisplayOrder();
+                if (map.get(displayOrder) == null) {
+                    map.put(displayOrder, new HashSet<CartMenuItemOffer>());
+                }
+                var set = map.get(displayOrder);
+                set.add(childOffer);
+                map.put(displayOrder, set);
+            }
+            SortedSet<Integer> displayOrders = new TreeSet<>(map.keySet());
+            for (Integer displayOrder : displayOrders) {
+                Set<CartMenuItemOffer> offers = map.get(displayOrder);
+                for (var offer : offers) {
+                    lineItems.add(SessionCreateParams.LineItem.builder()
+                            .setQuantity(Long.valueOf(offer.getQuantity()))
+                            .setPrice(offer.getMenuItemOffer().getStripePriceId()).build());
+                }
+            }
         }
+
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setSuccessUrl(FRONTEND_URL + "/checkout/success")
