@@ -20,10 +20,12 @@ import com.revature.marstown.dtos.responses.MenuSectionResponse;
 import com.revature.marstown.dtos.responses.StripePriceResponse;
 import com.revature.marstown.dtos.responses.StripePricesResponse;
 import com.revature.marstown.entities.Menu;
+import com.revature.marstown.entities.MenuSection;
 import com.revature.marstown.services.MenuService;
 import com.revature.marstown.services.StripeService;
 import com.revature.marstown.utils.PriceUtil;
 import com.revature.marstown.utils.custom_exceptions.ResourceConflictException;
+import com.stripe.model.Price;
 
 import lombok.AllArgsConstructor;
 
@@ -60,6 +62,15 @@ public class MenuController {
                         prices);
                 String price = priceResponse.getUnit_amount_decimal();
                 menuItemOffer.setPrice(PriceUtil.stripePriceStringToBigDecimal(price));
+                for (MenuSectionResponse childSection : menuItem.getMenuSections()) {
+                    for (MenuItemResponse childMenuItem : childSection.getMenuItems()) {
+                        MenuItemOfferResponse childMenuItemOffer = childMenuItem.getMenuItemOffers().iterator().next();
+                        StripePriceResponse childPriceResponse = stripeService
+                                .findStripePrice(childMenuItemOffer.getStripePriceId(), prices);
+                        String childPrice = childPriceResponse.getUnit_amount_decimal();
+                        childMenuItemOffer.setPrice(PriceUtil.stripePriceStringToBigDecimal(childPrice));
+                    }
+                }
             }
         }
     }
