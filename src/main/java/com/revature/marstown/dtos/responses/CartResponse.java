@@ -23,32 +23,19 @@ public class CartResponse {
     public CartResponse(Cart cart) {
         this.id = cart.getId();
         var cartMenuItemOffers = cart.getCartMenuItemOffers();
-        var cartMenuItemOffersList = new ArrayList<>(cartMenuItemOffers);
         cartMenuItemOfferResponses = new ArrayList<>();
 
-        while (cartMenuItemOffersList.size() > 0) {
-            var currentMenuItemOffer = cartMenuItemOffersList.get(0);
-            var parentMenuSection = currentMenuItemOffer.getMenuItemOffer().getMenuItem().getParentMenuSection();
-            boolean isTopLevelMenuItemOffer = parentMenuSection.getParentMenuItem() == null;
+        for (var cartMenuItemOffer : cartMenuItemOffers) {
+            boolean isTopLevelMenuItemOffer = cartMenuItemOffer.getParentCartMenuItemOffer() == null;
             if (isTopLevelMenuItemOffer) {
-                cartMenuItemOfferResponses.add(new CartMenuItemOfferResponse(currentMenuItemOffer));
-                cartMenuItemOffersList.remove(currentMenuItemOffer);
-            } else {
-                var parentMenuItem = parentMenuSection.getParentMenuItem();
-                var parentOfferResponse = cartMenuItemOfferResponses.stream()
-                        .filter(offerResponse -> parentMenuItem.getId()
-                                .equals(offerResponse.getMenuItemId()))
-                        .findAny().orElse(null);
-                if (parentOfferResponse != null) {
-                    parentOfferResponse.childCartMenuItemOffers
-                            .add(new CartMenuItemOfferResponse(currentMenuItemOffer));
-                    cartMenuItemOffersList.remove(currentMenuItemOffer);
-                } else {
-                    cartMenuItemOffersList.remove(currentMenuItemOffer);
-                    cartMenuItemOffersList.add(currentMenuItemOffer);
+                var cartMenuItemOfferResponse = new CartMenuItemOfferResponse(cartMenuItemOffer);
+                cartMenuItemOfferResponses.add(cartMenuItemOfferResponse);
+                for (var child : cartMenuItemOffer.getChildCartMenuItemOffers()) {
+                    cartMenuItemOfferResponse.childCartMenuItemOffers.add(new CartMenuItemOfferResponse(child));
                 }
             }
         }
+
         Collections.sort(cartMenuItemOfferResponses,
                 Comparator.comparing(CartMenuItemOfferResponse::getParentMenuSectionDisplayOrder)
                         .thenComparing(CartMenuItemOfferResponse::getDisplayOrder));
