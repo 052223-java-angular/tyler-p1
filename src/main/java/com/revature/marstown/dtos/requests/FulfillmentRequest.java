@@ -15,7 +15,7 @@ public class FulfillmentRequest {
     private String api_version;
     private Long created;
     private boolean livemode;
-    private Integer pending_weekhooks;
+    private Integer pending_webhooks;
     private String type;
     private FullfillmentRequestData data;
 }

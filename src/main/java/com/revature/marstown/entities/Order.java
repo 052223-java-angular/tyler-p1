@@ -1,6 +1,10 @@
 package com.revature.marstown.entities;
 
-import java.util.Set;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.UUID;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -23,30 +27,29 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "cart_menu_item_offers")
-public class CartMenuItemOffer {
+@Table(name = "orders")
+public class Order {
     @Id
     private String id;
 
-    @Column
-    private Integer quantity;
-
     @ManyToOne
-    @JoinColumn(name = "cart_id")
+    @JoinColumn(name = "user_id")
     @JsonBackReference
-    private Cart cart;
+    private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_item_offer_id")
-    @JsonBackReference
-    private MenuItemOffer menuItemOffer;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_cart_menu_item_offer_id")
-    @JsonBackReference
-    private CartMenuItemOffer parentCartMenuItemOffer;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentCartMenuItemOffer")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
     @JsonManagedReference
-    private Set<CartMenuItemOffer> childCartMenuItemOffers;
+    private java.util.Set<OrderMenuItemOffer> orderMenuItemOffers;
+
+    @Column
+    private BigDecimal amount;
+
+    @Column(name = "created_date")
+    @CreationTimestamp
+    private Date createdDate;
+
+    public Order(User user) {
+        this.id = UUID.randomUUID().toString();
+        this.user = user;
+    }
 }

@@ -27,6 +27,7 @@ import com.revature.marstown.entities.Cart;
 import com.revature.marstown.entities.CartMenuItemOffer;
 import com.revature.marstown.services.CartService;
 import com.revature.marstown.services.JwtTokenService;
+import com.revature.marstown.services.OrderService;
 import com.revature.marstown.services.StripeService;
 import com.revature.marstown.utils.ControllerUtil;
 import com.revature.marstown.utils.custom_exceptions.InvalidCartForUserException;
@@ -214,35 +215,4 @@ public class CartController {
         Session session = stripeService.createCheckoutSession(userId, cart);
         return ResponseEntity.ok(new CheckoutResponse(session.getUrl()));
     }
-
-    @PostMapping("/fulfillment")
-    public ResponseEntity<?> orderFulfillment(
-            @RequestHeader Map<String, String> headers,
-            @RequestBody FulfillmentRequest request) {
-
-        logger.info("Inside fulfillment");
-
-        var metadata = request.getData().getObject().getMetadata();
-        if (metadata != null) {
-            var userId = metadata.get("user_id");
-            if (userId != null) {
-                var cart = cartService.getCartByUserId(userId);
-
-                if (!cart.getUser().getId().equals(userId)) {
-                    throw new InvalidCartForUserException("Invalid cart for user!");
-                }
-
-                // TODO: Convert cart menu item offers to order menu item offers and tie to
-                // order
-
-                // Remove cart menu item offers from cart
-                for (CartMenuItemOffer cartMenuItemOffer : cart.getCartMenuItemOffers()) {
-                    cartService.removeCartMenuItemOffer(cartMenuItemOffer.getId());
-                }
-            }
-        }
-
-        return ResponseEntity.noContent().build();
-    }
-
 }
