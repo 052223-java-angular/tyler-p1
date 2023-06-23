@@ -1,5 +1,7 @@
 package com.revature.marstown.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.marstown.dtos.requests.FulfillmentRequest;
+import com.revature.marstown.dtos.responses.OrderResponse;
 import com.revature.marstown.entities.CartMenuItemOffer;
 import com.revature.marstown.services.CartService;
 import com.revature.marstown.services.JwtTokenService;
@@ -71,7 +74,7 @@ public class OrderController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<?> getOrders(@RequestHeader Map<String, String> headers) {
+    public ResponseEntity<List<OrderResponse>> getOrders(@RequestHeader Map<String, String> headers) {
         String token = ControllerUtil.extractJwtTokenFromAuthorizationHeader(headers);
         String userId = jwtTokenService.extractUserId(token);
 
@@ -80,7 +83,11 @@ public class OrderController {
         }
 
         var orders = orderService.getAllOrdersForUser(userId);
+        List<OrderResponse> ordersResponse = new ArrayList<>();
+        for (var order : orders) {
+            ordersResponse.add(new OrderResponse(order));
+        }
 
-        return ResponseEntity.ok(orders);
+        return ResponseEntity.ok(ordersResponse);
     }
 }

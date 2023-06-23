@@ -44,12 +44,12 @@ public class CartMenuItemOfferResponse {
         this.stripePriceId = cartMenuItemOffer.getMenuItemOffer().getStripePriceId();
         var parentMenuSection = menuItemOffer.getMenuItem().getParentMenuSection();
         if (parentMenuSection != null) {
-            parentMenuSectionDisplayOrder = parentMenuSection.getDisplayOrder();
+            this.parentMenuSectionDisplayOrder = parentMenuSection.getDisplayOrder();
             if (parentMenuSection.getParentMenuItem() != null) {
-                parentMenuSectionMenuItemId = parentMenuSection.getParentMenuItem().getId();
+                this.parentMenuSectionMenuItemId = parentMenuSection.getParentMenuItem().getId();
             }
         }
-        childCartMenuItemOffers = new ArrayList<>();
+        this.childCartMenuItemOffers = new ArrayList<>();
         this.displayOrder = menuItemOffer.getMenuItem().getDisplayOrder();
         this.maxQuantity = menuItemOffer.getMaximumQuantity();
         this.minQuantity = menuItemOffer.getMinimumQuantity();
