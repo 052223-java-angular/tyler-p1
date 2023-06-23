@@ -47,6 +47,7 @@ public class OrderController {
             if (userId != null) {
 
                 switch (request.getType()) {
+                    case "checkout.session.completed":
                     case "payment_intent.succeeded":
                         var cart = cartService.getCartByUserId(userId);
 
