@@ -87,7 +87,7 @@ public class CartController {
         HttpHeaders responseHeaders = new HttpHeaders();
         String countHeader = "X-Total-Count";
         responseHeaders.set(countHeader, cartService.getNumberOfItemsInCart(cart).toString());
-        responseHeaders.set("Access-Control-Expose-Headers", countHeader);
+        responseHeaders.set(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, countHeader);
 
         return ResponseEntity.ok().headers(responseHeaders).body(null);
     }
