@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -67,6 +67,29 @@ public class CartController {
         cartService.addStripePricesToCartResponse(cartResponse);
 
         return ResponseEntity.ok(cartResponse);
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<?> getCartCount(@RequestHeader Map<String, String> headers) {
+        String token = ControllerUtil.extractJwtTokenFromAuthorizationHeader(headers);
+        String userId = jwtTokenService.extractUserId(token);
+
+        if (userId == null) {
+            throw new JwtExpiredException("JWT Token expired");
+        }
+
+        var cart = cartService.getCartByUserId(userId);
+
+        if (!cart.getUser().getId().equals(userId)) {
+            throw new InvalidCartForUserException("Invalid cart for user!");
+        }
+
+        HttpHeaders responseHeaders = new HttpHeaders();
+        String countHeader = "X-Total-Count";
+        responseHeaders.set(countHeader, cartService.getNumberOfItemsInCart(cart).toString());
+        responseHeaders.set("Access-Control-Expose-Headers", countHeader);
+
+        return ResponseEntity.ok().headers(responseHeaders).body(null);
     }
 
     @PostMapping("/menuitemoffers")

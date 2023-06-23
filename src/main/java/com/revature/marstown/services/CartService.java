@@ -1,7 +1,6 @@
 package com.revature.marstown.services;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -66,6 +65,16 @@ public class CartService {
         }
 
         return cartOptional.get();
+    }
+
+    public Integer getNumberOfItemsInCart(Cart cart) {
+        int count = 0;
+        for (var item : cart.getCartMenuItemOffers()) {
+            if (item.getParentCartMenuItemOffer() == null) {
+                count += item.getQuantity();
+            }
+        }
+        return count;
     }
 
     public CartMenuItemOffer addMenuItemOfferToCart(String userId, NewCartMenuItemOfferRequest request) {
@@ -185,11 +194,18 @@ public class CartService {
 
     public void addStripePricesToCartResponse(CartResponse cartResponse) {
         for (CartMenuItemOfferResponse cartMenuItemOffer : cartResponse.getCartMenuItemOfferResponses()) {
-            var price = stripeService.findStripePrice(cartMenuItemOffer.getStripePriceId(),
-                    stripePrices.getStripePriceResponse());
-            if (price != null) {
-                cartMenuItemOffer.setPrice(PriceUtil.stripePriceStringToBigDecimal(price.getUnit_amount_decimal()));
+            setCartMenuItemOfferResponsePrice(cartMenuItemOffer);
+            for (CartMenuItemOfferResponse child : cartMenuItemOffer.getChildCartMenuItemOffers()) {
+                setCartMenuItemOfferResponsePrice(child);
             }
+        }
+    }
+
+    private void setCartMenuItemOfferResponsePrice(CartMenuItemOfferResponse response) {
+        var price = stripeService.findStripePrice(response.getStripePriceId(),
+                stripePrices.getStripePriceResponse());
+        if (price != null) {
+            response.setPrice(PriceUtil.stripePriceStringToBigDecimal(price.getUnit_amount_decimal()));
         }
     }
 
