@@ -18,7 +18,7 @@ import lombok.Setter;
 @Setter
 public class CartResponse {
     private String id;
-    List<CartMenuItemOfferResponse> cartMenuItemOfferResponses;
+    private List<CartMenuItemOfferResponse> cartMenuItemOfferResponses;
 
     public CartResponse(Cart cart) {
         this.id = cart.getId();

@@ -1,11 +1,11 @@
 package com.revature.marstown.entities;
 
+import java.math.BigDecimal;
 import java.util.Set;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -32,6 +32,9 @@ public class OrderMenuItemOffer {
     @Column
     Integer quantity;
 
+    @Column(nullable = false)
+    private BigDecimal price;
+
     @ManyToOne
     @JoinColumn(name = "order_id")
     @JsonBackReference
@@ -51,16 +54,17 @@ public class OrderMenuItemOffer {
     @JsonManagedReference
     private Set<OrderMenuItemOffer> childOrderMenuItemOffers;
 
-    public OrderMenuItemOffer(Order order, CartMenuItemOffer cartMenuItemOffer) {
+    public OrderMenuItemOffer(Order order, CartMenuItemOffer cartMenuItemOffer, BigDecimal price) {
         this.id = UUID.randomUUID().toString();
         this.quantity = cartMenuItemOffer.getQuantity();
         this.order = order;
+        this.price = price;
         this.menuItemOffer = cartMenuItemOffer.getMenuItemOffer();
     }
 
-    public OrderMenuItemOffer(Order order, CartMenuItemOffer cartMenuItemOffer,
+    public OrderMenuItemOffer(Order order, CartMenuItemOffer cartMenuItemOffer, BigDecimal price,
             OrderMenuItemOffer parenOrderMenuItemOffer) {
-        this(order, cartMenuItemOffer);
+        this(order, cartMenuItemOffer, price);
         this.parenOrderMenuItemOffer = parenOrderMenuItemOffer;
     }
 }
