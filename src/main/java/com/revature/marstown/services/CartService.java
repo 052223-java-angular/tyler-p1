@@ -164,6 +164,11 @@ public class CartService {
         return cartMenuItemOffer;
     }
 
+    public void removeAllCartMenuItemOffers(Cart cart) {
+        cartMenuItemOfferRepository
+                .deleteAllById(cart.getCartMenuItemOffers().stream().map(x -> x.getId()).collect(Collectors.toList()));
+    }
+
     public void removeCartMenuItemOffer(String cartMenuItemOfferId) {
         if (cartMenuItemOfferId == null) {
             /* throw exception */
