@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.revature.marstown.dtos.requests.FulfillmentRequest;
 import com.revature.marstown.dtos.responses.OrderResponse;
 import com.revature.marstown.dtos.responses.OrdersResponse;
-import com.revature.marstown.entities.CartMenuItemOffer;
 import com.revature.marstown.services.CartService;
 import com.revature.marstown.services.JwtTokenService;
 import com.revature.marstown.services.OrderService;

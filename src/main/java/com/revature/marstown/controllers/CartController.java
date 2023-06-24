@@ -140,6 +140,10 @@ public class CartController {
         }
 
         cartService.removeCartMenuItemOffer(cartMenuItemOfferId);
+
+        if (cart.getCartMenuItemOffers().size() == 0) {
+            cartService.removePointsFromCart(cart);
+        }
         return ResponseEntity.noContent().build();
     }
 
