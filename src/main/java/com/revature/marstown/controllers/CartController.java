@@ -17,15 +17,19 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.revature.marstown.components.StripePrices;
 import com.revature.marstown.dtos.requests.NewCartMenuItemOfferRequest;
 import com.revature.marstown.dtos.requests.UpdateCartMenuItemOfferRequest;
+import com.revature.marstown.dtos.requests.UpdateCartStripeCouponIdRequest;
 import com.revature.marstown.dtos.responses.CartMenuItemOfferResponse;
 import com.revature.marstown.dtos.responses.CartResponse;
 import com.revature.marstown.dtos.responses.CheckoutResponse;
 import com.revature.marstown.entities.Cart;
 import com.revature.marstown.entities.CartMenuItemOffer;
+import com.revature.marstown.entities.Point;
 import com.revature.marstown.services.CartService;
 import com.revature.marstown.services.JwtTokenService;
+import com.revature.marstown.services.PointService;
 import com.revature.marstown.services.StripeService;
 import com.revature.marstown.utils.ControllerUtil;
 import com.revature.marstown.utils.custom_exceptions.InvalidCartForUserException;
@@ -45,6 +49,8 @@ public class CartController {
     private final CartService cartService;
     private final JwtTokenService jwtTokenService;
     private final StripeService stripeService;
+    private final PointService pointService;
+    private final StripePrices stripePrices;
     private static final Logger logger = LoggerFactory.getLogger(CartController.class);
 
     @GetMapping("/")
@@ -212,5 +218,49 @@ public class CartController {
 
         Session session = stripeService.createCheckoutSession(userId, cart);
         return ResponseEntity.ok(new CheckoutResponse(session.getUrl()));
+    }
+
+    @PatchMapping("/redeempoints")
+    public ResponseEntity<?> applyPointsToCart(
+            @RequestHeader Map<String, String> headers,
+            @RequestBody UpdateCartStripeCouponIdRequest request) {
+        String token = ControllerUtil.extractJwtTokenFromAuthorizationHeader(headers);
+        String userId = jwtTokenService.extractUserId(token);
+
+        if (userId == null) {
+            throw new JwtExpiredException("JWT Token expired");
+        }
+
+        Cart cart = cartService.getCartByUserId(userId);
+        Point points = pointService.getPoints(userId);
+
+        if (!pointService.canRedeemPoints(points, request.getAmount())) {
+            throw new ResourceConflictException("Unable to redeem points");
+        }
+
+        var cartTotalAmount = cartService.getTotalAmount(cart, stripePrices);
+        if (cartTotalAmount < (request.getAmount().doubleValue() / 100)) {
+            throw new ResourceConflictException("Unable to redeem points");
+        }
+
+        cartService.applyPointsToCart(cart, request.getAmount());
+
+        return ResponseEntity.ok(request.getAmount());
+    }
+
+    @PatchMapping("/redeempoints/remove")
+    public ResponseEntity<?> removePointsFromCart(@RequestHeader Map<String, String> headers) {
+        String token = ControllerUtil.extractJwtTokenFromAuthorizationHeader(headers);
+        String userId = jwtTokenService.extractUserId(token);
+
+        if (userId == null) {
+            throw new JwtExpiredException("JWT Token expired");
+        }
+
+        Cart cart = cartService.getCartByUserId(userId);
+
+        cartService.removePointsFromCart(cart);
+
+        return ResponseEntity.noContent().build();
     }
 }

@@ -43,6 +43,7 @@ public class CartService {
         User user = new User("", "", null);
         user.setId(userId);
         var cart = new Cart(user);
+        cart.setPointsApplied(0L);
 
         return cartRepository.save(cart);
     }
@@ -221,5 +222,29 @@ public class CartService {
         cartMenuItemOffer.setQuantity(quantity);
 
         cartMenuItemOfferRepository.save(cartMenuItemOffer);
+    }
+
+    public void applyPointsToCart(Cart cart, Long points) {
+        cart.setPointsApplied(points);
+        cartRepository.save(cart);
+    }
+
+    public void removePointsFromCart(Cart cart) {
+        cart.setPointsApplied(0L);
+        cartRepository.save(cart);
+    }
+
+    public Double getTotalAmount(Cart cart, StripePrices prices) {
+        Double amount = 0.0;
+        for (var item : cart.getCartMenuItemOffers().stream().filter(x -> x.getParentCartMenuItemOffer() == null)
+                .collect(Collectors.toList())) {
+            amount += stripeService.findStripePriceDouble(item.getMenuItemOffer().getStripePriceId(),
+                    prices.getStripePriceResponse()) * item.getQuantity();
+            for (var child : item.getChildCartMenuItemOffers()) {
+                amount += stripeService.findStripePriceDouble(child.getMenuItemOffer().getStripePriceId(),
+                        prices.getStripePriceResponse()) * child.getQuantity();
+            }
+        }
+        return amount;
     }
 }

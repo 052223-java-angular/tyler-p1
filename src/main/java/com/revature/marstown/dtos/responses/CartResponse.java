@@ -18,10 +18,12 @@ import lombok.Setter;
 @Setter
 public class CartResponse {
     private String id;
+    private Long points;
     private List<CartMenuItemOfferResponse> cartMenuItemOfferResponses;
 
     public CartResponse(Cart cart) {
         this.id = cart.getId();
+        this.points = cart.getPointsApplied();
         var cartMenuItemOffers = cart.getCartMenuItemOffers();
         cartMenuItemOfferResponses = new ArrayList<>();
 
