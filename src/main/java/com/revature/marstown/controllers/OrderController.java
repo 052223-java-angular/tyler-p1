@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -17,14 +18,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.marstown.dtos.requests.FulfillmentRequest;
 import com.revature.marstown.dtos.responses.OrderResponse;
+import com.revature.marstown.dtos.responses.OrdersResponse;
 import com.revature.marstown.entities.CartMenuItemOffer;
 import com.revature.marstown.services.CartService;
 import com.revature.marstown.services.JwtTokenService;
 import com.revature.marstown.services.OrderService;
 import com.revature.marstown.services.PointService;
 import com.revature.marstown.utils.ControllerUtil;
+import com.revature.marstown.utils.custom_exceptions.InvalidAuthorizationException;
 import com.revature.marstown.utils.custom_exceptions.InvalidCartForUserException;
 import com.revature.marstown.utils.custom_exceptions.JwtExpiredException;
+import com.revature.marstown.utils.custom_exceptions.ResourceConflictException;
 
 import lombok.AllArgsConstructor;
 
@@ -66,9 +70,7 @@ public class OrderController {
                             cartService.removePointsFromCart(cart);
                         }
 
-                        for (CartMenuItemOffer cartMenuItemOffer : cart.getCartMenuItemOffers()) {
-                            cartService.removeCartMenuItemOffer(cartMenuItemOffer.getId());
-                        }
+                        cartService.removeAllCartMenuItemOffers(cart);
                         break;
                     default:
                         break;
@@ -80,7 +82,7 @@ public class OrderController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<OrderResponse>> getOrders(@RequestHeader Map<String, String> headers) {
+    public ResponseEntity<List<OrdersResponse>> getOrders(@RequestHeader Map<String, String> headers) {
         String token = ControllerUtil.extractJwtTokenFromAuthorizationHeader(headers);
         String userId = jwtTokenService.extractUserId(token);
 
@@ -89,11 +91,37 @@ public class OrderController {
         }
 
         var orders = orderService.getAllOrdersForUser(userId);
-        List<OrderResponse> ordersResponse = new ArrayList<>();
+        List<OrdersResponse> ordersResponse = new ArrayList<>();
         for (var order : orders) {
-            ordersResponse.add(new OrderResponse(order));
+            ordersResponse.add(new OrdersResponse(order));
         }
 
         return ResponseEntity.ok(ordersResponse);
+    }
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<?> getOrder(
+            @RequestHeader Map<String, String> headers,
+            @PathVariable String orderId) {
+        String token = ControllerUtil.extractJwtTokenFromAuthorizationHeader(headers);
+        String userId = jwtTokenService.extractUserId(token);
+
+        if (userId == null) {
+            throw new JwtExpiredException("JWT Token expired");
+        }
+
+        var order = orderService.getById(orderId);
+
+        if (order.isEmpty()) {
+            throw new ResourceConflictException("Order Not Found!");
+        }
+
+        if (!order.get().getUser().getId().equals(userId)) {
+            throw new InvalidAuthorizationException("Invalid order for user!");
+        }
+
+        var orderResponse = new OrderResponse(order.get());
+
+        return ResponseEntity.ok(orderResponse);
     }
 }

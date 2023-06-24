@@ -1,8 +1,11 @@
 package com.revature.marstown.services;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.Collections;
 
 import org.springframework.stereotype.Service;
 
@@ -68,6 +71,19 @@ public class OrderService {
     }
 
     public List<Order> getAllOrdersForUser(String userId) {
-        return orderRepository.findByUserId(userId);
+        var orders = orderRepository.findByUserId(userId);
+        Collections.sort(orders, new Comparator<Order>() {
+            public int compare(Order o1, Order o2) {
+                if (o1.getCreatedDate() == null || o2.getCreatedDate() == null)
+                    return 0;
+                return o2.getCreatedDate().compareTo(o1.getCreatedDate());
+            }
+        });
+
+        return orders;
+    }
+
+    public Optional<Order> getById(String orderId) {
+        return orderRepository.findById(orderId);
     }
 }

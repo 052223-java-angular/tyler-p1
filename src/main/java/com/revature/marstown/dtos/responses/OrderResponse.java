@@ -22,13 +22,14 @@ public class OrderResponse {
     private String id;
     private Date createdDate;
     private BigDecimal amount;
-    private List<OrderMenuItemOfferResponse> orderItemOfferResponses;
+    List<OrderMenuItemOfferResponse> orderMenuItemOfferResponses;
 
     public OrderResponse(Order order) {
         this.id = order.getId();
         this.createdDate = order.getCreatedDate();
         this.amount = order.getAmount();
-        this.orderItemOfferResponses = new ArrayList<>();
+
+        this.orderMenuItemOfferResponses = new ArrayList<>();
 
         var orderMenuItemOffers = order.getOrderMenuItemOffers();
 
@@ -36,7 +37,7 @@ public class OrderResponse {
             boolean isTopLevelMenuItemOffer = orderMenuItemOffer.getParenOrderMenuItemOffer() == null;
             if (isTopLevelMenuItemOffer) {
                 var orderMenuItemOfferResponse = new OrderMenuItemOfferResponse(orderMenuItemOffer);
-                orderItemOfferResponses.add(orderMenuItemOfferResponse);
+                orderMenuItemOfferResponses.add(orderMenuItemOfferResponse);
                 for (var child : orderMenuItemOffer.getChildOrderMenuItemOffers()) {
                     orderMenuItemOfferResponse.childOrderMenuItemOfferResponses
                             .add(new OrderMenuItemOfferResponse(child));
@@ -44,8 +45,15 @@ public class OrderResponse {
             }
         }
 
-        Collections.sort(orderItemOfferResponses,
+        Collections.sort(orderMenuItemOfferResponses,
                 Comparator.comparing(OrderMenuItemOfferResponse::getParentMenuSectionDisplayOrder)
                         .thenComparing(OrderMenuItemOfferResponse::getDisplayOrder));
+
+        for (var orderMenuItemOfferResponse : orderMenuItemOfferResponses) {
+            Collections.sort(orderMenuItemOfferResponse.childOrderMenuItemOfferResponses,
+                    Comparator.comparing(OrderMenuItemOfferResponse::getParentMenuSectionDisplayOrder)
+                            .thenComparing(OrderMenuItemOfferResponse::getDisplayOrder));
+        }
+
     }
 }
