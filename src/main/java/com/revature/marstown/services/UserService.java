@@ -23,6 +23,7 @@ import lombok.AllArgsConstructor;
 public class UserService {
     private final RoleService roleService;
     private final CartService cartService;
+    private final PointService pointService;
     private final UserRepository userRepo;
 
     /**
@@ -43,6 +44,9 @@ public class UserService {
 
         // create cart for new user
         cartService.createCart(newUser.getId());
+
+        // create point storage for new user
+        pointService.createPoints(newUser.getId());
 
         // save and return user
         return userRepo.save(newUser);

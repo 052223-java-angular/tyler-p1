@@ -21,6 +21,7 @@ import com.revature.marstown.entities.CartMenuItemOffer;
 import com.revature.marstown.services.CartService;
 import com.revature.marstown.services.JwtTokenService;
 import com.revature.marstown.services.OrderService;
+import com.revature.marstown.services.PointService;
 import com.revature.marstown.utils.ControllerUtil;
 import com.revature.marstown.utils.custom_exceptions.InvalidCartForUserException;
 import com.revature.marstown.utils.custom_exceptions.JwtExpiredException;
@@ -35,6 +36,7 @@ public class OrderController {
     private final OrderService orderService;
     private final CartService cartService;
     private final JwtTokenService jwtTokenService;
+    private final PointService pointService;
     private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 
     @PostMapping("/fulfillment")
@@ -59,6 +61,10 @@ public class OrderController {
                         }
 
                         orderService.createOrderFromCart(cart);
+                        if (cart.getPointsApplied() > 0) {
+                            pointService.subtractPoints(userId, cart.getPointsApplied());
+                            cartService.removePointsFromCart(cart);
+                        }
 
                         for (CartMenuItemOffer cartMenuItemOffer : cart.getCartMenuItemOffers()) {
                             cartService.removeCartMenuItemOffer(cartMenuItemOffer.getId());

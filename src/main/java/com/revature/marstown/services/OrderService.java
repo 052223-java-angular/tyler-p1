@@ -1,9 +1,7 @@
 package com.revature.marstown.services;
 
-import java.util.Set;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -28,6 +26,7 @@ public class OrderService {
     private final OrderMenuItemOfferRepository orderMenuItemOfferRepository;
     private final UserService userService;
     private final StripeService stripeService;
+    private final PointService pointService;
     private final StripePrices stripePrices;
 
     public void createOrderFromCart(Cart cart) {
@@ -55,7 +54,8 @@ public class OrderService {
                 }
             }
         }
-        order.setAmount(new BigDecimal(amount));
+        pointService.addPoints(order.getUser().getId(), (long) Math.floor(amount));
+        order.setAmount(new BigDecimal(amount - (cart.getPointsApplied().doubleValue() / 100)));
         order.setCreatedDate(new Date());
         orderRepository.save(order);
     }

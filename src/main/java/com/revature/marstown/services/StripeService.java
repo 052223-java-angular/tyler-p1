@@ -1,5 +1,6 @@
 package com.revature.marstown.services;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,13 +23,16 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Coupon;
 import com.stripe.model.checkout.Session;
+import com.stripe.param.CouponCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import com.revature.marstown.dtos.responses.StripePriceResponse;
 import com.revature.marstown.dtos.responses.StripePricesResponse;
 import com.revature.marstown.entities.Cart;
 import com.revature.marstown.entities.CartMenuItemOffer;
 import com.revature.marstown.utils.ControllerUtil;
+import com.revature.marstown.utils.PriceUtil;
 
 @Service
 public class StripeService {
@@ -54,8 +58,15 @@ public class StripeService {
             HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
             ResponseEntity<StripePricesResponse> result = restTemplate.exchange(uriTemplate, HttpMethod.GET, entity,
                     StripePricesResponse.class, params);
-            return result.getBody();
-
+            var response = result.getBody();
+            if (response != null) {
+                Map<String, StripePriceResponse> pricesMap = new HashMap<>();
+                for (var price : response.getData()) {
+                    pricesMap.put(price.getId(), price);
+                }
+                response.setMap(pricesMap);
+            }
+            return response;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -63,12 +74,21 @@ public class StripeService {
     }
 
     public StripePriceResponse findStripePrice(String priceId, StripePricesResponse prices) {
-        for (StripePriceResponse response : prices.getData()) {
-            if (response.getId().equals(priceId)) {
-                return response;
-            }
-        }
-        return null;
+        return prices.getMap().get(priceId);
+    }
+
+    public Double findStripePriceDouble(String priceId, StripePricesResponse prices) {
+        return stripePriceToDouble(findStripePrice(priceId, prices));
+    }
+
+    public BigDecimal stripePriceToBigDecimal(StripePriceResponse stripePrice) {
+        String priceString = stripePrice.getUnit_amount_decimal();
+        return PriceUtil.stripePriceStringToBigDecimal(priceString);
+    }
+
+    public Double stripePriceToDouble(StripePriceResponse stripePrice) {
+        String priceString = stripePrice.getUnit_amount_decimal();
+        return PriceUtil.stripePriceStripeToDouble(priceString);
     }
 
     public Session createCheckoutSession(String userId, Cart cart) throws StripeException {
@@ -102,16 +122,40 @@ public class StripeService {
             }
         }
 
-        SessionCreateParams params = SessionCreateParams.builder()
-                .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl(FRONTEND_URL + "/checkout/success")
-                .setCancelUrl(FRONTEND_URL + "/cart")
-                .addAllLineItem(lineItems)
-                .setPaymentIntentData(
-                        SessionCreateParams.PaymentIntentData.builder()
-                                .putMetadata("user_id", userId)
-                                .build())
-                .build();
+        SessionCreateParams params;
+        if (cart.getPointsApplied() == 0) {
+            params = SessionCreateParams.builder()
+                    .setMode(SessionCreateParams.Mode.PAYMENT)
+                    .setSuccessUrl(FRONTEND_URL + "/checkout/success")
+                    .setCancelUrl(FRONTEND_URL + "/cart")
+                    .addAllLineItem(lineItems)
+                    .setPaymentIntentData(
+                            SessionCreateParams.PaymentIntentData.builder()
+                                    .putMetadata("user_id", userId)
+                                    .build())
+                    .build();
+        } else {
+            CouponCreateParams couponParams = CouponCreateParams.builder()
+                    .setAmountOff(cart.getPointsApplied())
+                    .setCurrency("USD")
+                    .setDuration(CouponCreateParams.Duration.FOREVER)
+                    .build();
+            Coupon coupon = Coupon.create(couponParams);
+            params = SessionCreateParams.builder()
+                    .setMode(SessionCreateParams.Mode.PAYMENT)
+                    .setSuccessUrl(FRONTEND_URL + "/checkout/success")
+                    .setCancelUrl(FRONTEND_URL + "/cart")
+                    .addAllLineItem(lineItems)
+                    .setPaymentIntentData(
+                            SessionCreateParams.PaymentIntentData.builder()
+                                    .putMetadata("user_id", userId)
+                                    .build())
+                    .addDiscount(
+                            SessionCreateParams.Discount.builder()
+                                    .setCoupon(coupon.getId())
+                                    .build())
+                    .build();
+        }
         Session session = Session.create(params);
         return session;
     }
