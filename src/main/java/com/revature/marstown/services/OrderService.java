@@ -86,4 +86,8 @@ public class OrderService {
     public Optional<Order> getById(String orderId) {
         return orderRepository.findById(orderId);
     }
+
+    public Optional<Order> getLatestOrder(String userId) {
+        return orderRepository.findFirstByUserIdOrderByCreatedDateDesc(userId);
+    }
 }
