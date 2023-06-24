@@ -123,4 +123,28 @@ public class OrderController {
 
         return ResponseEntity.ok(orderResponse);
     }
+
+    @GetMapping("/latest")
+    public ResponseEntity<?> getLatestOrder(@RequestHeader Map<String, String> headers) {
+        String token = ControllerUtil.extractJwtTokenFromAuthorizationHeader(headers);
+        String userId = jwtTokenService.extractUserId(token);
+
+        if (userId == null) {
+            throw new JwtExpiredException("JWT Token expired");
+        }
+
+        var order = orderService.getLatestOrder(userId);
+
+        if (order.isEmpty()) {
+            throw new ResourceConflictException("Order Not Found!");
+        }
+
+        if (!order.get().getUser().getId().equals(userId)) {
+            throw new InvalidAuthorizationException("Invalid order for user!");
+        }
+
+        var orderResponse = new OrderResponse(order.get());
+
+        return ResponseEntity.ok(orderResponse);
+    }
 }
