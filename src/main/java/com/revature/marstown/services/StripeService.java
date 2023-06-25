@@ -138,7 +138,7 @@ public class StripeService {
             CouponCreateParams couponParams = CouponCreateParams.builder()
                     .setAmountOff(cart.getPointsApplied())
                     .setCurrency("USD")
-                    .setDuration(CouponCreateParams.Duration.FOREVER)
+                    .setDuration(CouponCreateParams.Duration.ONCE)
                     .build();
             Coupon coupon = Coupon.create(couponParams);
             params = SessionCreateParams.builder()
