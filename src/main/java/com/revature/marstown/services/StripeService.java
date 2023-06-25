@@ -132,7 +132,7 @@ public class StripeService {
         SessionCreateParams params;
         if (cart.getPointsApplied() == 0) {
             params = SessionCreateParams.builder()
-                    .setMode(SessionCreateParams.Mode.SETUP)
+                    .setMode(SessionCreateParams.Mode.PAYMENT)
                     .setSuccessUrl(FRONTEND_URL + "/checkout/success")
                     .setCancelUrl(FRONTEND_URL + "/cart")
                     .addAllLineItem(lineItems)
