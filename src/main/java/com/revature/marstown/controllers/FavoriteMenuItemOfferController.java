@@ -1,5 +1,6 @@
 package com.revature.marstown.controllers;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -14,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.marstown.dtos.requests.FavoriteCartMenuItemOfferRequest;
+import com.revature.marstown.dtos.responses.FavoritesResponse;
 import com.revature.marstown.services.FavoriteMenuItemOfferService;
 import com.revature.marstown.services.JwtTokenService;
 import com.revature.marstown.utils.ControllerUtil;
+import com.revature.marstown.utils.custom_exceptions.InvalidAuthorizationException;
 import com.revature.marstown.utils.custom_exceptions.JwtExpiredException;
 import com.revature.marstown.utils.custom_exceptions.ResourceConflictException;
 
@@ -41,7 +44,15 @@ public class FavoriteMenuItemOfferController {
 
         var favorites = favoriteMenuItemOfferService.findAllByUserId(userId);
 
-        return ResponseEntity.ok(favorites);
+        var response = new ArrayList<FavoritesResponse>();
+        for (var favorite : favorites) {
+            if (!favorite.getUser().getId().equals(userId)) {
+                throw new InvalidAuthorizationException("Invalid favorite for user");
+            }
+            response.add(new FavoritesResponse(favorite));
+        }
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/")
