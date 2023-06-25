@@ -2,6 +2,8 @@ package com.revature.marstown.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -94,9 +96,14 @@ public class StripeService {
     public Session createCheckoutSession(String userId, Cart cart) throws StripeException {
         Stripe.apiKey = STRIPE_API_KEY;
         List<SessionCreateParams.LineItem> lineItems = new ArrayList<SessionCreateParams.LineItem>();
-        var topLevelCartMenuItemOffers = cart.getCartMenuItemOffers().stream()
+        List<CartMenuItemOffer> topLevelCartMenuItemOffers = cart.getCartMenuItemOffers().stream()
                 .filter(x -> x.getParentCartMenuItemOffer() == null)
+                .sorted(Comparator.<CartMenuItemOffer>comparingInt(
+                        x -> x.getMenuItemOffer().getMenuItem().getParentMenuSection().getDisplayOrder())
+                        .thenComparing(Comparator.<CartMenuItemOffer>comparingInt(
+                                y -> y.getMenuItemOffer().getMenuItem().getDisplayOrder())))
                 .collect(Collectors.toList());
+
         for (var topOffer : topLevelCartMenuItemOffers) {
             lineItems.add(SessionCreateParams.LineItem.builder()
                     .setQuantity(Long.valueOf(topOffer.getQuantity()))
@@ -138,7 +145,7 @@ public class StripeService {
             CouponCreateParams couponParams = CouponCreateParams.builder()
                     .setAmountOff(cart.getPointsApplied())
                     .setCurrency("USD")
-                    .setDuration(CouponCreateParams.Duration.FOREVER)
+                    .setDuration(CouponCreateParams.Duration.ONCE)
                     .build();
             Coupon coupon = Coupon.create(couponParams);
             params = SessionCreateParams.builder()
