@@ -6,9 +6,14 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.revature.marstown.components.StripePrices;
+import com.revature.marstown.dtos.responses.CartMenuItemOfferResponse;
+import com.revature.marstown.dtos.responses.CartResponse;
+import com.revature.marstown.dtos.responses.FavoritesResponse;
 import com.revature.marstown.entities.FavoriteMenuItemOffer;
 import com.revature.marstown.entities.MenuItemOffer;
 import com.revature.marstown.repositories.FavoriteMenuItemOfferRepository;
+import com.revature.marstown.utils.PriceUtil;
 import com.revature.marstown.utils.custom_exceptions.MenuItemOfferNotFoundException;
 import com.revature.marstown.utils.custom_exceptions.ResourceConflictException;
 
@@ -19,6 +24,8 @@ import lombok.AllArgsConstructor;
 public class FavoriteMenuItemOfferService {
     private final FavoriteMenuItemOfferRepository favoriteMenuItemOfferRepository;
     private final UserService userService;
+    private final StripeService stripeService;
+    private final StripePrices stripePrices;
 
     public List<FavoriteMenuItemOffer> findAllByUserId(String userId) {
         if (userId == null) {
@@ -68,5 +75,15 @@ public class FavoriteMenuItemOfferService {
 
     public Optional<FavoriteMenuItemOffer> findExistingFavoriteMenuItemOffer(String userId, String menuItemOfferId) {
         return favoriteMenuItemOfferRepository.findByUserIdAndMenuItemOfferId(userId, menuItemOfferId);
+    }
+
+    public void setFavoriteResponsePrice(FavoritesResponse favoriteResponse) {
+        var price = stripeService.findStripePrice(
+                favoriteResponse.getMenuItemResponse().getMenuItemOffers().iterator().next().getStripePriceId(),
+                stripePrices.getStripePriceResponse());
+        if (price != null) {
+            favoriteResponse.getMenuItemResponse().getMenuItemOffers().iterator().next()
+                    .setPrice(PriceUtil.stripePriceStringToBigDecimal(price.getUnit_amount_decimal()));
+        }
     }
 }

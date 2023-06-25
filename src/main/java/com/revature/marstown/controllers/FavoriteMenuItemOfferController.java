@@ -49,7 +49,10 @@ public class FavoriteMenuItemOfferController {
             if (!favorite.getUser().getId().equals(userId)) {
                 throw new InvalidAuthorizationException("Invalid favorite for user");
             }
-            response.add(new FavoritesResponse(favorite));
+            var favoriteResponse = new FavoritesResponse(favorite);
+            favoriteMenuItemOfferService.setFavoriteResponsePrice(favoriteResponse);
+            response.add(favoriteResponse);
+        
         }
 
         return ResponseEntity.ok(response);
