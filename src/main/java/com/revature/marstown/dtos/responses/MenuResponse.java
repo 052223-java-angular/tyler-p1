@@ -1,6 +1,8 @@
 package com.revature.marstown.dtos.responses;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.revature.marstown.entities.Menu;
@@ -32,7 +34,8 @@ public class MenuResponse {
             if (parentMenuItem == null) {
                 this.menuSections.add(new MenuSectionResponse(menuSection));
             }
-
         }
+        Collections.sort(this.menuSections,
+                Comparator.comparing(MenuSectionResponse::getDisplayOrder));
     }
 }

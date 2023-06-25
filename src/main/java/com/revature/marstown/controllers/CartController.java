@@ -243,7 +243,8 @@ public class CartController {
         }
 
         var cartTotalAmount = cartService.getTotalAmount(cart, stripePrices);
-        if (cartTotalAmount < (request.getAmount().doubleValue() / 100)) {
+        var minimumCartAmount = 0.50;
+        if ((cartTotalAmount - minimumCartAmount) < (request.getAmount().doubleValue() / 100)) {
             throw new ResourceConflictException("Unable to redeem points");
         }
 
