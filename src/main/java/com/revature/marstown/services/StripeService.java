@@ -35,6 +35,10 @@ import com.revature.marstown.entities.CartMenuItemOffer;
 import com.revature.marstown.utils.ControllerUtil;
 import com.revature.marstown.utils.PriceUtil;
 
+/**
+ * The StripeService class provides operations related to the Stripe Payment
+ * Processing API
+ */
 @Service
 public class StripeService {
     @Value("${stripe.apiKey.test}")

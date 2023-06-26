@@ -30,6 +30,9 @@ import com.revature.marstown.utils.custom_exceptions.UserNotFoundException;
 
 import lombok.AllArgsConstructor;
 
+/**
+ * The CartService class provides operations related to cart management
+ */
 @Service
 @AllArgsConstructor
 public class CartService {

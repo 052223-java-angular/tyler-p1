@@ -20,6 +20,9 @@ import com.revature.marstown.utils.custom_exceptions.MenuNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 
+/**
+ * The MenuService class provides operations related to menu retrieval
+ */
 @Service
 @AllArgsConstructor
 public class MenuService {
