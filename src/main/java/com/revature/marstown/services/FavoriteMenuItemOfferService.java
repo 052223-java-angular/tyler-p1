@@ -7,8 +7,6 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.revature.marstown.components.StripePrices;
-import com.revature.marstown.dtos.responses.CartMenuItemOfferResponse;
-import com.revature.marstown.dtos.responses.CartResponse;
 import com.revature.marstown.dtos.responses.FavoritesResponse;
 import com.revature.marstown.entities.FavoriteMenuItemOffer;
 import com.revature.marstown.entities.MenuItemOffer;
