@@ -1,6 +1,5 @@
 package com.revature.marstown.dtos.responses;
 
-import com.revature.marstown.dtos.requests.FavoriteCartMenuItemOfferRequest;
 import com.revature.marstown.entities.FavoriteMenuItemOffer;
 
 import lombok.AllArgsConstructor;
