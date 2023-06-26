@@ -9,7 +9,6 @@ This is a web application which will allow you to make orders of our delicious f
 ## User Stories
 
 - **As a user**, I want to register an account so that I can have a personalized ordering experience.
-- **As a user**, I want to be able to add a profile picture to my account.
 - **As a user**, I want to log in to my account so that I can access my current order and see my order history.
 - **As a user**, I want to browse through items.
 - **As a user**, I want to add items to my current order, only when logging in.
