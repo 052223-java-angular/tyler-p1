@@ -22,6 +22,9 @@ import com.revature.marstown.utils.PriceUtil;
 
 import lombok.AllArgsConstructor;
 
+/**
+ * The OrderService class provides operations related orders
+ */
 @Service
 @AllArgsConstructor
 public class OrderService {
