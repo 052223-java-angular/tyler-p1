@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.revature.marstown.components.MenuBean;
 import com.revature.marstown.components.StripePrices;
 import com.revature.marstown.dtos.responses.MenuItemOfferResponse;
 import com.revature.marstown.dtos.responses.MenuItemResponse;
@@ -34,6 +35,12 @@ public class MenuController {
     private final MenuService menuService;
     private final StripeService stripeService;
     private final StripePrices stripePrices;
+    private final MenuBean menuBean;
+
+    @GetMapping("/default")
+    public ResponseEntity<MenuResponse> getDefaultMenu() {
+        return ResponseEntity.ok(menuBean.getMenuResponse());
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<MenuResponse> getMenuById(@PathVariable String id) {
