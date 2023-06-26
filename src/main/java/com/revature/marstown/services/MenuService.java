@@ -6,14 +6,12 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import com.revature.marstown.components.MenuBean;
 import com.revature.marstown.components.StripePrices;
 import com.revature.marstown.dtos.responses.MenuItemOfferResponse;
 import com.revature.marstown.dtos.responses.MenuItemResponse;
 import com.revature.marstown.dtos.responses.MenuResponse;
 import com.revature.marstown.dtos.responses.MenuSectionResponse;
 import com.revature.marstown.dtos.responses.StripePriceResponse;
-import com.revature.marstown.dtos.responses.StripePricesResponse;
 import com.revature.marstown.entities.Menu;
 import com.revature.marstown.repositories.MenuRepository;
 import com.revature.marstown.utils.PriceUtil;
