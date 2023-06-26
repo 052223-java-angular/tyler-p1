@@ -2,6 +2,8 @@ package com.revature.marstown.entities;
 
 import java.util.Set;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
